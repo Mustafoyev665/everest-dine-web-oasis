@@ -60,22 +60,33 @@ const Navbar = () => {
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
-              <Heart className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
-              <ShoppingCart className="w-4 h-4" />
-              <span className="absolute -top-1 -right-1 bg-yellow-400 text-slate-900 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                0
-              </span>
-            </Button>
-            <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
-              <User className="w-4 h-4 mr-2" />
-              Sign In
-            </Button>
-            <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold">
-              Reserve Table
-            </Button>
+            <Link to="/liked">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
+                <Heart className="w-4 h-4" />
+              </Button>
+            </Link>
+            
+            <Link to="/cart">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
+                <ShoppingCart className="w-4 h-4" />
+                <span className="absolute -top-1 -right-1 bg-yellow-400 text-slate-900 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                  0
+                </span>
+              </Button>
+            </Link>
+            
+            <Link to="/login">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
+                <User className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
+            </Link>
+            
+            <Link to="/reservations">
+              <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold">
+                Reserve Table
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -107,13 +118,32 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
+              <div className="flex space-x-4 mt-4">
+                <Link to="/liked" onClick={() => setIsOpen(false)}>
+                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
+                    <Heart className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link to="/cart" onClick={() => setIsOpen(false)}>
+                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
+                    <ShoppingCart className="w-4 h-4" />
+                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-slate-900 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                      0
+                    </span>
+                  </Button>
+                </Link>
+              </div>
               <div className="pt-4 space-y-3">
-                <Button variant="outline" className="w-full">
-                  <User className="w-4 h-4 mr-2" />
-                  Sign In
+                <Button variant="outline" className="w-full" asChild>
+                  <Link to="/login" onClick={() => setIsOpen(false)}>
+                    <User className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Link>
                 </Button>
-                <Button className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900">
-                  Reserve Table
+                <Button className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900" asChild>
+                  <Link to="/reservations" onClick={() => setIsOpen(false)}>
+                    Reserve Table
+                  </Link>
                 </Button>
               </div>
             </div>

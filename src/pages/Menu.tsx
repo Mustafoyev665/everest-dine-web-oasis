@@ -1,230 +1,411 @@
 
 import React, { useState } from 'react';
+import { Search, Heart, ShoppingCart } from 'lucide-react';
 import Navbar from '@/components/Layout/Navbar';
 import Footer from '@/components/Layout/Footer';
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Star, Heart, Plus, Filter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from '@/hooks/use-toast';
+
+// Menu categories
+const categories = [
+  { id: 'appetizers', name: 'Appetizers' },
+  { id: 'mains', name: 'Main Courses' },
+  { id: 'sides', name: 'Side Dishes' },
+  { id: 'desserts', name: 'Desserts' },
+  { id: 'drinks', name: 'Drinks' },
+];
+
+// Sample menu items
+const menuItems = [
+  // Appetizers
+  {
+    id: 1,
+    name: 'Truffled Mushroom Bruschetta',
+    description: 'Artisanal sourdough toasts topped with wild mushrooms, black truffle, and aged parmesan',
+    price: 18,
+    category: 'appetizers',
+    image: 'appetizer-1',
+    popular: true,
+    dietary: ['vegetarian'],
+    ingredients: ['Sourdough bread', 'Wild mushrooms', 'Black truffle', 'Aged parmesan', 'Microgreens']
+  },
+  {
+    id: 2,
+    name: 'Seared Sea Scallops',
+    description: 'Hand-dived scallops with cauliflower purée, golden raisins, and pine nut dressing',
+    price: 24,
+    category: 'appetizers',
+    image: 'appetizer-2',
+    popular: false,
+    dietary: ['gluten-free'],
+    ingredients: ['Sea scallops', 'Cauliflower purée', 'Golden raisins', 'Pine nuts', 'Micro herbs']
+  },
+  
+  // Main Courses
+  {
+    id: 3,
+    name: 'Slow-cooked Lamb Shoulder',
+    description: 'Tender lamb shoulder with roasted root vegetables, red wine jus, and mint gremolata',
+    price: 38,
+    category: 'mains',
+    image: 'main-1',
+    popular: true,
+    dietary: ['gluten-free'],
+    ingredients: ['Lamb shoulder', 'Root vegetables', 'Red wine jus', 'Mint gremolata']
+  },
+  {
+    id: 4,
+    name: 'Pan-seared Sea Bass',
+    description: 'Wild sea bass with saffron risotto, charred asparagus, and citrus butter sauce',
+    price: 42,
+    category: 'mains',
+    image: 'main-2',
+    popular: true,
+    dietary: ['gluten-free'],
+    ingredients: ['Sea bass', 'Saffron risotto', 'Asparagus', 'Citrus butter']
+  },
+  {
+    id: 5,
+    name: 'Mushroom & Truffle Risotto',
+    description: 'Creamy arborio rice with wild mushrooms, black truffle, and aged parmesan',
+    price: 32,
+    category: 'mains',
+    image: 'main-3',
+    popular: false,
+    dietary: ['vegetarian', 'gluten-free'],
+    ingredients: ['Arborio rice', 'Wild mushrooms', 'Black truffle', 'Aged parmesan', 'Vegetable stock']
+  },
+  
+  // Side Dishes
+  {
+    id: 6,
+    name: 'Truffle Parmesan Fries',
+    description: 'Crispy fries tossed in truffle oil and grated parmesan',
+    price: 14,
+    category: 'sides',
+    image: 'side-1',
+    popular: true,
+    dietary: ['vegetarian'],
+    ingredients: ['Potatoes', 'Truffle oil', 'Parmesan', 'Sea salt', 'Herbs']
+  },
+  {
+    id: 7,
+    name: 'Roasted Brussels Sprouts',
+    description: 'Crispy brussels sprouts with bacon lardons and maple glaze',
+    price: 12,
+    category: 'sides',
+    image: 'side-2',
+    popular: false,
+    dietary: ['gluten-free'],
+    ingredients: ['Brussels sprouts', 'Bacon', 'Maple syrup', 'Balsamic vinegar']
+  },
+  
+  // Desserts
+  {
+    id: 8,
+    name: 'Dark Chocolate Soufflé',
+    description: 'Warm chocolate soufflé with vanilla bean ice cream and salted caramel',
+    price: 16,
+    category: 'desserts',
+    image: 'dessert-1',
+    popular: true,
+    dietary: ['vegetarian'],
+    ingredients: ['Dark chocolate', 'Eggs', 'Butter', 'Sugar', 'Vanilla ice cream']
+  },
+  {
+    id: 9,
+    name: 'Panna Cotta',
+    description: 'Vanilla bean panna cotta with seasonal berries and almond tuile',
+    price: 14,
+    category: 'desserts',
+    image: 'dessert-2',
+    popular: false,
+    dietary: ['vegetarian', 'gluten-free'],
+    ingredients: ['Heavy cream', 'Vanilla bean', 'Seasonal berries', 'Mint']
+  },
+  
+  // Drinks
+  {
+    id: 10,
+    name: 'Signature Martini',
+    description: 'House-infused botanical gin with dry vermouth and olive',
+    price: 18,
+    category: 'drinks',
+    image: 'drink-1',
+    popular: true,
+    ingredients: ['Botanical gin', 'Dry vermouth', 'Olive']
+  },
+  {
+    id: 11,
+    name: 'Sommelier\'s Wine Selection',
+    description: 'Selection of premium wines curated by our sommelier',
+    price: 22,
+    category: 'drinks',
+    image: 'drink-2',
+    popular: false,
+    ingredients: ['Selected wine']
+  },
+];
 
 const Menu = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [priceFilter, setPriceFilter] = useState('all');
-
-  const categories = [
-    { id: 'all', name: 'All Dishes', count: 48 },
-    { id: 'appetizers', name: 'Appetizers', count: 12 },
-    { id: 'mains', name: 'Main Courses', count: 18 },
-    { id: 'desserts', name: 'Desserts', count: 8 },
-    { id: 'beverages', name: 'Beverages', count: 10 }
-  ];
-
-  const menuItems = [
-    {
-      id: 1,
-      name: "Himalayan Lamb Tenderloin",
-      description: "Slow-cooked lamb with aromatic spices, truffle mashed potatoes",
-      price: 68,
-      category: "mains",
-      image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3",
-      rating: 4.9,
-      dietary: ["Gluten-free"],
-      spiceLevel: 2
-    },
-    {
-      id: 2,
-      name: "Everest Seafood Platter",
-      description: "Fresh lobster, sea bass, prawns with saffron risotto",
-      price: 85,
-      category: "mains",
-      image: "https://images.unsplash.com/photo-1559847844-d721426d6edc?ixlib=rb-4.0.3",
-      rating: 5.0,
-      dietary: ["Pescatarian"],
-      spiceLevel: 1
-    },
-    {
-      id: 3,
-      name: "Truffle Arancini",
-      description: "Crispy risotto balls with black truffle and parmesan",
-      price: 24,
-      category: "appetizers",
-      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3",
-      rating: 4.7,
-      dietary: ["Vegetarian"],
-      spiceLevel: 0
-    },
-    {
-      id: 4,
-      name: "Chocolate Summit",
-      description: "Dark chocolate mousse with gold leaf and berry compote",
-      price: 18,
-      category: "desserts",
-      image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3",
-      rating: 4.8,
-      dietary: ["Vegetarian"],
-      spiceLevel: 0
-    }
-  ];
-
-  const filteredItems = menuItems.filter(item => {
-    const categoryMatch = activeCategory === 'all' || item.category === activeCategory;
-    const priceMatch = priceFilter === 'all' || 
-      (priceFilter === 'under30' && item.price < 30) ||
-      (priceFilter === '30to60' && item.price >= 30 && item.price <= 60) ||
-      (priceFilter === 'over60' && item.price > 60);
-    return categoryMatch && priceMatch;
+  const [activeCategory, setActiveCategory] = useState('appetizers');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDish, setSelectedDish] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Filter menu items based on active category and search query
+  const filteredMenuItems = menuItems.filter(item => {
+    const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         item.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
   });
+  
+  // Handle dish selection and modal opening
+  const handleDishClick = (dish: any) => {
+    setSelectedDish(dish);
+    setIsModalOpen(true);
+  };
+  
+  // Handle adding to cart
+  const handleAddToCart = (dish: any) => {
+    console.log('Added to cart:', dish);
+    toast({
+      title: "Added to cart",
+      description: `${dish.name} has been added to your cart.`,
+    });
+    setIsModalOpen(false);
+  };
+  
+  // Handle adding to favorites
+  const handleAddToFavorites = (dish: any) => {
+    console.log('Added to favorites:', dish);
+    toast({
+      title: "Added to favorites",
+      description: `${dish.name} has been added to your favorites.`,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-slate-900">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="pt-24 pb-12 bg-gradient-to-b from-slate-900 to-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-display text-5xl md:text-6xl font-bold gradient-text mb-6">
-            Our Menu
-          </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            A curated collection of culinary masterpieces, each dish crafted with passion and precision
-          </p>
-        </div>
-      </section>
-
-      {/* Filters */}
-      <section className="py-8 bg-slate-800 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
-            {/* Category Filter */}
-            <div className="flex flex-wrap gap-3">
+      {/* Page Header */}
+      <div className="pt-32 pb-12 md:pt-40 md:pb-20 bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-display font-bold gradient-text mb-4">
+              Our Menu
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto">
+              Explore our exceptional dishes crafted with the finest ingredients
+            </p>
+          </div>
+          
+          {/* Search and Filter */}
+          <div className="mt-12 flex flex-col md:flex-row gap-4 justify-between">
+            <div className="relative w-full md:w-96">
+              <Input
+                type="text"
+                placeholder="Search menu..."
+                className="pl-10 bg-white/5 border-white/10 text-white"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Search className="absolute top-1/2 left-3 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            </div>
+            
+            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
+              <Button
+                variant={activeCategory === 'all' ? 'default' : 'outline'}
+                className={activeCategory === 'all' ? 'bg-yellow-400 text-slate-900' : 'bg-white/5 border-white/10'}
+                onClick={() => setActiveCategory('all')}
+              >
+                All
+              </Button>
               {categories.map((category) => (
-                <button
+                <Button
                   key={category.id}
+                  variant={activeCategory === category.id ? 'default' : 'outline'}
+                  className={activeCategory === category.id ? 'bg-yellow-400 text-slate-900' : 'bg-white/5 border-white/10'}
                   onClick={() => setActiveCategory(category.id)}
-                  className={`px-6 py-3 rounded-full font-medium transition-all duration-200 ${
-                    activeCategory === category.id
-                      ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900'
-                      : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-yellow-400'
-                  }`}
                 >
-                  {category.name} ({category.count})
-                </button>
+                  {category.name}
+                </Button>
               ))}
             </div>
-
-            {/* Price Filter */}
-            <div className="flex items-center space-x-4">
-              <Filter className="w-5 h-5 text-yellow-400" />
-              <select
-                value={priceFilter}
-                onChange={(e) => setPriceFilter(e.target.value)}
-                className="bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-              >
-                <option value="all">All Prices</option>
-                <option value="under30">Under $30</option>
-                <option value="30to60">$30 - $60</option>
-                <option value="over60">Over $60</option>
-              </select>
-            </div>
           </div>
         </div>
-      </section>
-
-      {/* Menu Items */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredItems.map((item, index) => (
-              <Card 
-                key={item.id}
-                className="group glass-card hover:bg-white/10 transition-all duration-500 overflow-hidden animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
+      </div>
+      
+      {/* Menu Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
+        {/* Menu Items Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredMenuItems.length > 0 ? (
+            filteredMenuItems.map((item) => (
+              <div 
+                key={item.id} 
+                className="glass-card overflow-hidden cursor-pointer group animate-fade-in"
+                onClick={() => handleDishClick(item)}
               >
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={item.image} 
-                    alt={item.name}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                <div className="h-48 bg-gradient-to-br from-yellow-400/20 to-amber-700/20 flex items-center justify-center relative">
+                  <div className="text-center p-4">
+                    <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-slate-900 font-display font-bold text-2xl">{item.name[0]}</span>
+                    </div>
+                    <p className="text-sm text-gray-400">Food Image Placeholder</p>
+                  </div>
                   
-                  <div className="absolute top-3 right-3 flex space-x-2">
+                  {/* Quick action buttons */}
+                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <Button 
+                      variant="outline" 
                       size="sm" 
-                      variant="ghost" 
-                      className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white p-2"
+                      className="bg-white/10 border-white/20 hover:bg-white/20"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToFavorites(item);
+                      }}
                     >
-                      <Heart className="w-4 h-4" />
+                      <Heart className="h-4 w-4" />
                     </Button>
                   </div>
-
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="text-white font-semibold text-sm">{item.rating}</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {item.dietary.map((tag, i) => (
-                          <span 
-                            key={i}
-                            className="bg-yellow-400/20 text-yellow-400 text-xs px-2 py-1 rounded-full"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                  
+                  {/* Popular badge */}
+                  {item.popular && (
+                    <div className="absolute top-3 left-3 bg-yellow-400 text-slate-900 text-xs font-semibold px-2 py-1 rounded">
+                      Popular
                     </div>
+                  )}
+                </div>
+                
+                <div className="p-6">
+                  <h3 className="text-xl font-display font-semibold mb-2">{item.name}</h3>
+                  <p className="text-gray-400 line-clamp-2 mb-4">{item.description}</p>
+                  
+                  {/* Dietary tags */}
+                  {item.dietary && item.dietary.length > 0 && (
+                    <div className="flex gap-2 mb-4">
+                      {item.dietary.includes('vegetarian') && (
+                        <span className="text-xs bg-green-900/30 text-green-400 px-2 py-1 rounded-full">
+                          Vegetarian
+                        </span>
+                      )}
+                      {item.dietary.includes('gluten-free') && (
+                        <span className="text-xs bg-blue-900/30 text-blue-400 px-2 py-1 rounded-full">
+                          Gluten-Free
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-yellow-400 font-semibold">${item.price}</span>
+                    <Button
+                      size="sm"
+                      className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(item);
+                      }}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-1" />
+                      Add to Cart
+                    </Button>
                   </div>
                 </div>
-
-                <CardContent className="p-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-display text-lg font-semibold text-white group-hover:text-yellow-400 transition-colors duration-200 line-clamp-1">
-                      {item.name}
-                    </h3>
-                    <span className="text-xl font-bold gradient-text">
-                      ${item.price}
-                    </span>
-                  </div>
-
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                    {item.description}
-                  </p>
-
-                  {/* Spice Level */}
-                  <div className="flex items-center space-x-2 mb-4">
-                    <span className="text-xs text-gray-400">Spice Level:</span>
-                    <div className="flex space-x-1">
-                      {[...Array(3)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={`w-2 h-2 rounded-full ${
-                            i < item.spiceLevel ? 'bg-red-400' : 'bg-gray-600'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <Button 
-                    className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add to Cart
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {filteredItems.length === 0 && (
-            <div className="text-center py-16">
-              <p className="text-gray-400 text-lg">No items found matching your filters.</p>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <h3 className="text-xl font-semibold mb-2">No items found</h3>
+              <p className="text-gray-400">
+                Try adjusting your search or filter to find what you're looking for.
+              </p>
             </div>
           )}
         </div>
-      </section>
-
+      </div>
+      
+      {/* Dish Detail Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="bg-slate-800 border-white/10 text-white max-w-2xl">
+          {selectedDish && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-display font-bold">
+                  {selectedDish.name}
+                </DialogTitle>
+                <DialogDescription className="text-gray-300">
+                  {selectedDish.description}
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="h-56 bg-gradient-to-br from-yellow-400/20 to-amber-700/20 flex items-center justify-center my-4 rounded-md">
+                <div className="text-center p-4">
+                  <div className="w-32 h-32 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span className="text-slate-900 font-display font-bold text-4xl">{selectedDish.name[0]}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-2">Ingredients</h3>
+                  <ul className="list-disc list-inside text-gray-300 space-y-1">
+                    {selectedDish.ingredients.map((ingredient: string, idx: number) => (
+                      <li key={idx}>{ingredient}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                {selectedDish.dietary && selectedDish.dietary.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold mb-2">Dietary</h3>
+                    <div className="flex gap-2">
+                      {selectedDish.dietary.includes('vegetarian') && (
+                        <span className="text-xs bg-green-900/30 text-green-400 px-2 py-1 rounded-full">
+                          Vegetarian
+                        </span>
+                      )}
+                      {selectedDish.dietary.includes('gluten-free') && (
+                        <span className="text-xs bg-blue-900/30 text-blue-400 px-2 py-1 rounded-full">
+                          Gluten-Free
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex justify-between items-center pt-4 mt-4 border-t border-white/10">
+                  <span className="text-xl text-yellow-400 font-semibold">${selectedDish.price}</span>
+                  <div className="flex gap-3">
+                    <Button 
+                      variant="outline" 
+                      className="border-white/10 hover:bg-white/10"
+                      onClick={() => handleAddToFavorites(selectedDish)}
+                    >
+                      <Heart className="h-4 w-4 mr-2" />
+                      Favorite
+                    </Button>
+                    <Button
+                      className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600"
+                      onClick={() => handleAddToCart(selectedDish)}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Cart
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+      
       <Footer />
     </div>
   );
