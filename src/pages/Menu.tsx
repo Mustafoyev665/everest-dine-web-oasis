@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Heart, ShoppingCart } from 'lucide-react';
 import Navbar from '@/components/Layout/Navbar';
@@ -6,7 +5,7 @@ import Footer from '@/components/Layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { toast } from '@/hooks/use-toast';
+import { useShoppingContext } from '@/context/ShoppingContext';
 
 // Menu categories
 const categories = [
@@ -154,6 +153,7 @@ const Menu = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDish, setSelectedDish] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { addToCart, addToLiked, isInCart, isLiked } = useShoppingContext();
   
   // Filter menu items based on active category and search query
   const filteredMenuItems = menuItems.filter(item => {
@@ -171,21 +171,12 @@ const Menu = () => {
   
   // Handle adding to cart
   const handleAddToCart = (dish: any) => {
-    console.log('Added to cart:', dish);
-    toast({
-      title: "Added to cart",
-      description: `${dish.name} has been added to your cart.`,
-    });
-    setIsModalOpen(false);
+    addToCart(dish);
   };
   
   // Handle adding to favorites
   const handleAddToFavorites = (dish: any) => {
-    console.log('Added to favorites:', dish);
-    toast({
-      title: "Added to favorites",
-      description: `${dish.name} has been added to your favorites.`,
-    });
+    addToLiked(dish);
   };
 
   return (
@@ -264,13 +255,13 @@ const Menu = () => {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="bg-white/10 border-white/20 hover:bg-white/20"
+                      className={`${isLiked(item.id) ? 'bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30' : 'bg-white/10 border-white/20 hover:bg-white/20'}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToFavorites(item);
                       }}
                     >
-                      <Heart className="h-4 w-4" />
+                      <Heart className={`h-4 w-4 ${isLiked(item.id) ? 'fill-current' : ''}`} />
                     </Button>
                   </div>
                   
@@ -306,14 +297,16 @@ const Menu = () => {
                     <span className="text-yellow-400 font-semibold">${item.price}</span>
                     <Button
                       size="sm"
-                      className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600"
+                      className={`${isInCart(item.id) 
+                        ? 'bg-green-600 hover:bg-green-700' 
+                        : 'bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600'}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToCart(item);
                       }}
                     >
                       <ShoppingCart className="h-4 w-4 mr-1" />
-                      Add to Cart
+                      {isInCart(item.id) ? 'Add More' : 'Add to Cart'}
                     </Button>
                   </div>
                 </div>
@@ -385,18 +378,20 @@ const Menu = () => {
                   <div className="flex gap-3">
                     <Button 
                       variant="outline" 
-                      className="border-white/10 hover:bg-white/10"
+                      className={`border-white/10 hover:bg-white/10 ${isLiked(selectedDish.id) ? 'text-red-400 hover:text-red-300' : ''}`}
                       onClick={() => handleAddToFavorites(selectedDish)}
                     >
-                      <Heart className="h-4 w-4 mr-2" />
-                      Favorite
+                      <Heart className={`h-4 w-4 mr-2 ${isLiked(selectedDish.id) ? 'fill-current' : ''}`} />
+                      {isLiked(selectedDish.id) ? 'Favorited' : 'Favorite'}
                     </Button>
                     <Button
-                      className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600"
+                      className={`${isInCart(selectedDish.id) 
+                        ? 'bg-green-600 hover:bg-green-700' 
+                        : 'bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600'}`}
                       onClick={() => handleAddToCart(selectedDish)}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
+                      {isInCart(selectedDish.id) ? 'Add More' : 'Add to Cart'}
                     </Button>
                   </div>
                 </div>

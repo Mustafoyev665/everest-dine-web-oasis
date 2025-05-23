@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "@/hooks/use-toast";
 
 // Define the types for our items
 export interface MenuItem {
@@ -81,18 +82,35 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === itemToAdd.id);
       if (existingItem) {
+        toast({
+          title: "Item updated in cart",
+          description: `${itemToAdd.name}'s quantity has been updated in your cart.`,
+        });
         return prevItems.map((item) =>
           item.id === itemToAdd.id
             ? { ...item, quantity: (item.quantity || 1) + 1 }
             : item
         );
       }
+      
+      toast({
+        title: "Item added to cart",
+        description: `${itemToAdd.name} has been added to your cart.`,
+      });
       return [...prevItems, { ...itemToAdd, quantity: 1 }];
     });
   };
 
   const removeFromCart = (id: number) => {
+    const itemToRemove = cartItems.find(item => item.id === id);
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    
+    if (itemToRemove) {
+      toast({
+        title: "Item removed",
+        description: `${itemToRemove.name} has been removed from your cart.`,
+      });
+    }
   };
 
   const updateCartItemQuantity = (id: number, quantity: number) => {
@@ -107,19 +125,42 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const clearCart = () => {
     setCartItems([]);
+    toast({
+      title: "Cart cleared",
+      description: "All items have been removed from your cart.",
+    });
   };
 
   // Liked items operations
   const addToLiked = (item: MenuItem) => {
     setLikedItems((prevItems) => {
       const existingItem = prevItems.find((i) => i.id === item.id);
-      if (existingItem) return prevItems;
+      if (existingItem) {
+        toast({
+          title: "Already in favorites",
+          description: `${item.name} is already in your favorites.`,
+        });
+        return prevItems;
+      }
+      
+      toast({
+        title: "Added to favorites",
+        description: `${item.name} has been added to your favorites.`,
+      });
       return [...prevItems, item];
     });
   };
 
   const removeFromLiked = (id: number) => {
+    const itemToRemove = likedItems.find(item => item.id === id);
     setLikedItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    
+    if (itemToRemove) {
+      toast({
+        title: "Removed from favorites",
+        description: `${itemToRemove.name} has been removed from your favorites.`,
+      });
+    }
   };
 
   // Helper functions
@@ -151,4 +192,3 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
 // Create a hook to use the shopping context
 export const useShoppingContext = () => useContext(ShoppingContext);
-
