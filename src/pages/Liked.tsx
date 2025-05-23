@@ -1,46 +1,19 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Trash2, ShoppingCart } from 'lucide-react';
 import Navbar from '@/components/Layout/Navbar';
 import Footer from '@/components/Layout/Footer';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-
-// Sample favorites items for demo
-const initialFavorites = [
-  {
-    id: 4,
-    name: 'Pan-seared Sea Bass',
-    description: 'Wild sea bass with saffron risotto, charred asparagus, and citrus butter sauce',
-    price: 42,
-    category: 'mains',
-    image: 'main-2',
-  },
-  {
-    id: 8,
-    name: 'Dark Chocolate Soufflé',
-    description: 'Warm chocolate soufflé with vanilla bean ice cream and salted caramel',
-    price: 16,
-    category: 'desserts',
-    image: 'dessert-1',
-  },
-  {
-    id: 10,
-    name: 'Signature Martini',
-    description: 'House-infused botanical gin with dry vermouth and olive',
-    price: 18,
-    category: 'drinks',
-    image: 'drink-1',
-  },
-];
+import { useShoppingContext } from '@/context/ShoppingContext';
 
 const Liked = () => {
-  const [favorites, setFavorites] = useState(initialFavorites);
+  const { likedItems, removeFromLiked, addToCart, clearCart } = useShoppingContext();
   
   // Remove from favorites
   const removeFromFavorites = (id: number) => {
-    setFavorites(favorites.filter(item => item.id !== id));
+    removeFromLiked(id);
     
     toast({
       title: "Removed from favorites",
@@ -49,8 +22,8 @@ const Liked = () => {
   };
   
   // Add to cart
-  const addToCart = (item: any) => {
-    console.log('Added to cart:', item);
+  const handleAddToCart = (item: any) => {
+    addToCart(item);
     
     toast({
       title: "Added to cart",
@@ -60,7 +33,8 @@ const Liked = () => {
   
   // Clear all favorites
   const clearFavorites = () => {
-    setFavorites([]);
+    // Since we don't have a direct clearLiked function, we'll remove each item
+    likedItems.forEach(item => removeFromLiked(item.id));
     
     toast({
       title: "Favorites cleared",
@@ -88,11 +62,11 @@ const Liked = () => {
       
       {/* Favorites Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
-        {favorites.length > 0 ? (
+        {likedItems.length > 0 ? (
           <>
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-display font-bold">
-                Saved Items <span className="text-gray-400">({favorites.length})</span>
+                Saved Items <span className="text-gray-400">({likedItems.length})</span>
               </h2>
               <Button 
                 variant="outline" 
@@ -105,7 +79,7 @@ const Liked = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {favorites.map((item) => (
+              {likedItems.map((item) => (
                 <div key={item.id} className="glass-card overflow-hidden animate-fade-in group">
                   <div className="h-48 bg-gradient-to-br from-yellow-400/20 to-amber-700/20 flex items-center justify-center relative">
                     <div className="text-center p-4">
@@ -138,7 +112,7 @@ const Liked = () => {
                         <Button
                           size="sm"
                           className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600"
-                          onClick={() => addToCart(item)}
+                          onClick={() => handleAddToCart(item)}
                         >
                           <ShoppingCart className="h-4 w-4 mr-1" />
                           Add to Cart

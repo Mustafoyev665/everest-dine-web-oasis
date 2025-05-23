@@ -3,11 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, User, Heart, ShoppingCart } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useShoppingContext } from '@/context/ShoppingContext';
+import { Badge } from "@/components/ui/badge";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { cartCount, likedCount } = useShoppingContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,17 +64,28 @@ const Navbar = () => {
           {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <Link to="/liked">
-              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
                 <Heart className="w-4 h-4" />
+                {likedCount > 0 && (
+                  <Badge 
+                    className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full"
+                  >
+                    {likedCount}
+                  </Badge>
+                )}
               </Button>
             </Link>
             
             <Link to="/cart">
               <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
                 <ShoppingCart className="w-4 h-4" />
-                <span className="absolute -top-1 -right-1 bg-yellow-400 text-slate-900 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                  0
-                </span>
+                {cartCount > 0 && (
+                  <Badge 
+                    className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full"
+                  >
+                    {cartCount}
+                  </Badge>
+                )}
               </Button>
             </Link>
             
@@ -120,16 +134,27 @@ const Navbar = () => {
               ))}
               <div className="flex space-x-4 mt-4">
                 <Link to="/liked" onClick={() => setIsOpen(false)}>
-                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
+                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
                     <Heart className="w-4 h-4" />
+                    {likedCount > 0 && (
+                      <Badge 
+                        className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full"
+                      >
+                        {likedCount}
+                      </Badge>
+                    )}
                   </Button>
                 </Link>
                 <Link to="/cart" onClick={() => setIsOpen(false)}>
                   <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
                     <ShoppingCart className="w-4 h-4" />
-                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-slate-900 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                      0
-                    </span>
+                    {cartCount > 0 && (
+                      <Badge 
+                        className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full"
+                      >
+                        {cartCount}
+                      </Badge>
+                    )}
                   </Button>
                 </Link>
               </div>

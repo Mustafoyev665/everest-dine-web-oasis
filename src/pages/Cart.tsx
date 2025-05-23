@@ -1,76 +1,26 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus, CreditCard } from 'lucide-react';
 import Navbar from '@/components/Layout/Navbar';
 import Footer from '@/components/Layout/Footer';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-
-// Sample cart items for demo
-const initialCartItems = [
-  {
-    id: 3,
-    name: 'Slow-cooked Lamb Shoulder',
-    description: 'Tender lamb shoulder with roasted root vegetables',
-    price: 38,
-    quantity: 2,
-    image: 'main-1',
-  },
-  {
-    id: 8,
-    name: 'Dark Chocolate Soufflé',
-    description: 'Warm chocolate soufflé with vanilla bean ice cream',
-    price: 16,
-    quantity: 1,
-    image: 'dessert-1',
-  },
-  {
-    id: 6,
-    name: 'Truffle Parmesan Fries',
-    description: 'Crispy fries tossed in truffle oil and grated parmesan',
-    price: 14,
-    quantity: 1,
-    image: 'side-1',
-  },
-];
+import { useShoppingContext } from '@/context/ShoppingContext';
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const { 
+    cartItems, 
+    removeFromCart, 
+    updateCartItemQuantity,
+    clearCart,
+    cartTotal 
+  } = useShoppingContext();
   
   // Calculate totals
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartTotal;
   const tax = subtotal * 0.08; // 8% tax rate
   const total = subtotal + tax;
-  
-  // Update quantity
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    ));
-  };
-  
-  // Remove item from cart
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-    
-    toast({
-      title: "Item removed",
-      description: "The item has been removed from your cart.",
-    });
-  };
-  
-  // Clear entire cart
-  const clearCart = () => {
-    setCartItems([]);
-    
-    toast({
-      title: "Cart cleared",
-      description: "All items have been removed from your cart.",
-    });
-  };
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -102,7 +52,13 @@ const Cart = () => {
                   <Button 
                     variant="ghost" 
                     className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                    onClick={clearCart}
+                    onClick={() => {
+                      clearCart();
+                      toast({
+                        title: "Cart cleared",
+                        description: "All items have been removed from your cart.",
+                      });
+                    }}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Clear Cart
@@ -132,18 +88,19 @@ const Cart = () => {
                               variant="outline" 
                               size="sm"
                               className="h-8 w-8 p-0 bg-white/5 border-white/10"
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              onClick={() => updateCartItemQuantity(item.id, (item.quantity || 1) - 1)}
+                              disabled={(item.quantity || 1) <= 1}
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
                             
-                            <span className="w-8 text-center">{item.quantity}</span>
+                            <span className="w-8 text-center">{item.quantity || 1}</span>
                             
                             <Button 
                               variant="outline" 
                               size="sm"
                               className="h-8 w-8 p-0 bg-white/5 border-white/10"
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              onClick={() => updateCartItemQuantity(item.id, (item.quantity || 1) + 1)}
                             >
                               <Plus className="h-3 w-3" />
                             </Button>
@@ -152,7 +109,13 @@ const Cart = () => {
                               variant="ghost"
                               size="sm"
                               className="text-red-400 hover:text-red-300 ml-2"
-                              onClick={() => removeItem(item.id)}
+                              onClick={() => {
+                                removeFromCart(item.id);
+                                toast({
+                                  title: "Item removed",
+                                  description: "The item has been removed from your cart.",
+                                });
+                              }}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -195,9 +158,13 @@ const Cart = () => {
                   
                   <Button 
                     className="w-full mt-6 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold"
+                    disabled={cartItems.length === 0}
+                    asChild
                   >
-                    <CreditCard className="mr-2 h-5 w-5" />
-                    Proceed to Checkout
+                    <Link to="/checkout">
+                      <CreditCard className="mr-2 h-5 w-5" />
+                      Proceed to Checkout
+                    </Link>
                   </Button>
                   
                   <p className="text-xs text-gray-400 text-center mt-4">
