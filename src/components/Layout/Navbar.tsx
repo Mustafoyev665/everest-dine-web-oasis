@@ -31,18 +31,18 @@ const Navbar = () => {
 
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-      scrolled ? 'bg-slate-900/95 dark:bg-slate-900/95 backdrop-blur-lg shadow-2xl' : 'bg-transparent dark:bg-transparent'
+      scrolled ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg shadow-2xl' : 'bg-transparent dark:bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
+            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200 floating-3d">
               <span className="text-slate-900 font-display font-bold text-xl">E</span>
             </div>
             <div className="hidden sm:block">
               <span className="font-display text-2xl font-bold gradient-text">Everest Rest</span>
-              <p className="text-xs text-gray-400 dark:text-gray-400 -mt-1">Premium Dining Experience</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 -mt-1">Premium Dining Experience</p>
             </div>
           </Link>
 
@@ -53,7 +53,7 @@ const Navbar = () => {
                 key={link.name}
                 to={link.path}
                 className={`relative text-sm font-medium transition-colors duration-200 hover:text-yellow-400 group ${
-                  location.pathname === link.path ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-300'
+                  location.pathname === link.path ? 'text-yellow-400' : 'text-gray-800 dark:text-gray-300'
                 }`}
               >
                 {link.name}
@@ -68,7 +68,7 @@ const Navbar = () => {
             <ThemeToggle />
 
             <Link to="/liked">
-              <Button variant="ghost" size="sm" className="text-gray-300 dark:text-gray-300 hover:text-yellow-400 relative">
+              <Button variant="ghost" size="sm" className="text-gray-800 dark:text-gray-300 hover:text-yellow-400 relative">
                 <Heart className="w-4 h-4" />
                 {likedCount > 0 && (
                   <Badge 
@@ -81,7 +81,7 @@ const Navbar = () => {
             </Link>
             
             <Link to="/cart">
-              <Button variant="ghost" size="sm" className="text-gray-300 dark:text-gray-300 hover:text-yellow-400 relative">
+              <Button variant="ghost" size="sm" className="text-gray-800 dark:text-gray-300 hover:text-yellow-400 relative">
                 <ShoppingCart className="w-4 h-4" />
                 {cartCount > 0 && (
                   <Badge 
@@ -94,14 +94,14 @@ const Navbar = () => {
             </Link>
             
             <Link to="/login">
-              <Button variant="ghost" size="sm" className="text-gray-300 dark:text-gray-300 hover:text-yellow-400">
+              <Button variant="ghost" size="sm" className="text-gray-800 dark:text-gray-300 hover:text-yellow-400">
                 <User className="w-4 h-4 mr-2" />
                 Sign In
               </Button>
             </Link>
             
             <Link to="/reservations">
-              <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold">
+              <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold pulse-3d">
                 Reserve Table
               </Button>
             </Link>
@@ -114,7 +114,7 @@ const Navbar = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-300 dark:text-gray-300"
+              className="text-gray-800 dark:text-gray-300"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </Button>
@@ -123,14 +123,14 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-slate-900/98 dark:bg-slate-900/98 backdrop-blur-lg border-t border-white/10">
+          <div className="md:hidden absolute top-full left-0 w-full bg-white/98 dark:bg-slate-900/98 backdrop-blur-lg border-t border-gray-200 dark:border-white/10">
             <div className="px-4 py-6 space-y-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
                   className={`block text-lg font-medium transition-colors duration-200 ${
-                    location.pathname === link.path ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-300 hover:text-yellow-400'
+                    location.pathname === link.path ? 'text-yellow-400' : 'text-gray-800 dark:text-gray-300 hover:text-yellow-400'
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -139,7 +139,7 @@ const Navbar = () => {
               ))}
               <div className="flex space-x-4 mt-4">
                 <Link to="/liked" onClick={() => setIsOpen(false)}>
-                  <Button variant="ghost" size="sm" className="text-gray-300 dark:text-gray-300 hover:text-yellow-400 relative">
+                  <Button variant="ghost" size="sm" className="text-gray-800 dark:text-gray-300 hover:text-yellow-400 relative">
                     <Heart className="w-4 h-4" />
                     {likedCount > 0 && (
                       <Badge 
@@ -151,7 +151,7 @@ const Navbar = () => {
                   </Button>
                 </Link>
                 <Link to="/cart" onClick={() => setIsOpen(false)}>
-                  <Button variant="ghost" size="sm" className="text-gray-300 dark:text-gray-300 hover:text-yellow-400 relative">
+                  <Button variant="ghost" size="sm" className="text-gray-800 dark:text-gray-300 hover:text-yellow-400 relative">
                     <ShoppingCart className="w-4 h-4" />
                     {cartCount > 0 && (
                       <Badge 
