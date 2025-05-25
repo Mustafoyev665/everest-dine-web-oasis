@@ -77,64 +77,6 @@
   .premium-shadow {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05);
   }
-
-  .floating-3d {
-    @apply transform-gpu;
-    animation: float3d 6s ease-in-out infinite;
-    transform-style: preserve-3d;
-  }
-
-  .rotate-3d {
-    @apply transform-gpu;
-    animation: rotate3d 20s linear infinite;
-    transform-style: preserve-3d;
-  }
-
-  .pulse-3d {
-    @apply transform-gpu;
-    animation: pulse3d 4s ease-in-out infinite;
-    transform-style: preserve-3d;
-  }
-}
-
-/* Enhanced 3D animations */
-@keyframes float3d {
-  0%, 100% {
-    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
-  }
-  25% {
-    transform: translateY(-20px) rotateX(5deg) rotateY(5deg);
-  }
-  50% {
-    transform: translateY(-10px) rotateX(-3deg) rotateY(10deg);
-  }
-  75% {
-    transform: translateY(-15px) rotateX(3deg) rotateY(-5deg);
-  }
-}
-
-@keyframes rotate3d {
-  0% {
-    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-  }
-  33% {
-    transform: rotateX(360deg) rotateY(120deg) rotateZ(0deg);
-  }
-  66% {
-    transform: rotateX(0deg) rotateY(240deg) rotateZ(180deg);
-  }
-  100% {
-    transform: rotateX(0deg) rotateY(360deg) rotateZ(360deg);
-  }
-}
-
-@keyframes pulse3d {
-  0%, 100% {
-    transform: scale(1) rotateX(0deg);
-  }
-  50% {
-    transform: scale(1.05) rotateX(5deg) rotateY(5deg);
-  }
 }
 
 @keyframes fadeInUp {

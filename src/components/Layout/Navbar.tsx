@@ -37,7 +37,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200 floating-3d">
+            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
               <span className="text-slate-900 font-display font-bold text-xl">E</span>
             </div>
             <div className="hidden sm:block">
@@ -101,7 +101,7 @@ const Navbar = () => {
             </Link>
             
             <Link to="/reservations">
-              <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold pulse-3d">
+              <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold">
                 Reserve Table
               </Button>
             </Link>

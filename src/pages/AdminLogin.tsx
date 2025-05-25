@@ -59,7 +59,7 @@ const AdminLogin = () => {
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center mx-auto mb-4 floating-3d">
+          <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center mx-auto mb-4">
             <Shield className="w-8 h-8 text-slate-900" />
           </div>
           <h1 className="text-3xl font-display font-bold gradient-text mb-2">
@@ -70,7 +70,7 @@ const AdminLogin = () => {
           </p>
         </div>
         
-        <div className="glass-card p-8 animate-fade-in">
+        <div className="glass-card p-8 animate-fade-in-up">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
