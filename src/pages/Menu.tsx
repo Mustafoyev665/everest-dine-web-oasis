@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
@@ -134,27 +135,27 @@ const Menu = () => {
       <Navbar />
       
       {/* Page Header */}
-      <div className="pt-32 pb-12 md:pt-40 md:pb-20 bg-slate-900">
+      <div className="pt-20 pb-8 md:pt-32 md:pb-12 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-display font-bold gradient-text mb-4 animate-neon-glow">
+            <h1 className="text-3xl md:text-5xl font-display font-bold gradient-text mb-4 animate-neon-glow">
               Exquisite Menu
             </h1>
-            <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto">
+            <p className="text-lg md:text-2xl text-gray-400 max-w-3xl mx-auto">
               Discover our collection of premium dishes crafted by world-class chefs
             </p>
           </div>
         </div>
       </div>
 
-      {/* Categories - Horizontal Scroll */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12">
-        <div className="flex overflow-x-auto pb-4 space-x-4 hide-scrollbar">
+      {/* Categories - Mobile Optimized Horizontal Scroll */}
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 mb-8">
+        <div className="flex overflow-x-auto pb-4 space-x-2 hide-scrollbar">
           {categories.map((category) => (
             <Button
               key={category.id}
               variant={activeCategory === category.id ? "default" : "outline"}
-              className={`whitespace-nowrap transition-all duration-300 ${
+              className={`whitespace-nowrap text-xs sm:text-sm px-3 sm:px-4 py-2 transition-all duration-300 ${
                 activeCategory === category.id 
                   ? "neon-glow animate-pulse-neon" 
                   : "border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10"
@@ -167,9 +168,9 @@ const Menu = () => {
         </div>
       </div>
 
-      {/* Menu Items Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
+      {/* Menu Items Grid - Mobile Responsive */}
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
           {currentItems.map((item, index) => (
             <Card 
               key={item.id} 
@@ -180,55 +181,55 @@ const Menu = () => {
                 <img 
                   src={item.image} 
                   alt={item.name}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-36 sm:h-48 object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                 
                 {/* Floating buttons */}
-                <div className="absolute top-3 right-3 flex flex-col space-y-2">
+                <div className="absolute top-2 right-2 flex flex-col space-y-1">
                   <Button 
                     size="sm" 
                     variant="ghost" 
-                    className={`bg-white/10 backdrop-blur-sm border transition-all duration-300 p-2 ${
+                    className={`bg-white/10 backdrop-blur-sm border transition-all duration-300 p-1.5 ${
                       isItemLiked(item.id) 
                         ? "bg-pink-500/20 border-pink-500/30 text-pink-400 shadow-lg shadow-pink-400/20" 
                         : "border-pink-400/30 text-pink-400 hover:bg-pink-500/20 hover:shadow-pink-400/40"
                     }`}
                     onClick={() => handleAddToLiked(item)}
                   >
-                    <Heart className={`w-4 h-4 ${isItemLiked(item.id) ? 'fill-current' : ''}`} />
+                    <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${isItemLiked(item.id) ? 'fill-current' : ''}`} />
                   </Button>
                 </div>
 
-                <div className="absolute bottom-3 left-3 right-3">
-                  <div className="flex items-center space-x-2 mb-2">
+                <div className="absolute bottom-2 left-2 right-2">
+                  <div className="flex items-center space-x-2 mb-1">
                     <div className="flex items-center space-x-1">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current animate-pulse" />
-                      <span className="text-white font-semibold">{item.rating}</span>
+                      <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 fill-current animate-pulse" />
+                      <span className="text-white font-semibold text-xs sm:text-sm">{item.rating}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-display text-lg font-semibold text-white group-hover:text-cyan-400 transition-colors duration-300 line-clamp-1">
+                  <h3 className="font-display text-sm sm:text-lg font-semibold text-white group-hover:text-cyan-400 transition-colors duration-300 line-clamp-1">
                     {item.name}
                   </h3>
-                  <span className="text-xl font-bold gradient-text animate-pulse whitespace-nowrap ml-2">
+                  <span className="text-lg sm:text-xl font-bold gradient-text animate-pulse whitespace-nowrap ml-2">
                     ${item.price}
                   </span>
                 </div>
 
-                <p className="text-gray-400 mb-4 leading-relaxed text-sm line-clamp-2">
+                <p className="text-gray-400 mb-3 leading-relaxed text-xs sm:text-sm line-clamp-2">
                   {item.description}
                 </p>
 
                 <Button 
-                  className="w-full bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 hover:from-cyan-500 hover:to-purple-600 font-semibold shadow-lg shadow-cyan-400/30 hover:shadow-cyan-400/50 transition-all duration-300 animate-shimmer"
+                  className="w-full bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 hover:from-cyan-500 hover:to-purple-600 font-semibold shadow-lg shadow-cyan-400/30 hover:shadow-cyan-400/50 transition-all duration-300 animate-shimmer text-xs sm:text-sm py-2"
                   onClick={() => handleAddToCart(item)}
                 >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Add to Cart
                 </Button>
               </CardContent>
@@ -238,13 +239,13 @@ const Menu = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="mt-12 flex justify-center">
+          <div className="mt-8 sm:mt-12 flex justify-center">
             <Pagination>
-              <PaginationContent className="glass-card p-2">
+              <PaginationContent className="glass-card p-1 sm:p-2">
                 <PaginationItem>
                   <PaginationPrevious 
                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-cyan-400/10"}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-cyan-400/10 text-xs sm:text-sm"}
                   />
                 </PaginationItem>
                 
@@ -307,7 +308,7 @@ const Menu = () => {
                 <PaginationItem>
                   <PaginationNext 
                     onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-cyan-400/10"}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-cyan-400/10 text-xs sm:text-sm"}
                   />
                 </PaginationItem>
               </PaginationContent>
