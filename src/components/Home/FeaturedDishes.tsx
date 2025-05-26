@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useShoppingContext } from '@/context/ShoppingContext';
 import { toast } from '@/hooks/use-toast';
+import { menuItems } from '@/data/menuData';
 
 const FeaturedDishes = () => {
   const { addToCart, addToLiked, likedItems } = useShoppingContext();
@@ -13,35 +14,12 @@ const FeaturedDishes = () => {
     return likedItems.some(item => item.id === itemId);
   };
 
+  // Get first 3 items from different categories
   const featuredItems = [
-    {
-      id: 1,
-      name: "Truffle Arancini",
-      description: "Crispy risotto balls with black truffle and parmesan",
-      price: 24,
-      category: 'appetizers',
-      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b",
-      rating: 4.8
-    },
-    {
-      id: 6,
-      name: "Himalayan Lamb Tenderloin",
-      description: "Slow-cooked lamb with aromatic spices",
-      price: 68,
-      category: 'mains',
-      image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d",
-      rating: 4.9
-    },
-    {
-      id: 21,
-      name: "Chocolate Soufflé",
-      description: "Dark chocolate soufflé with vanilla ice cream",
-      price: 18,
-      category: 'desserts',
-      image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d",
-      rating: 4.9
-    }
-  ];
+    menuItems.find(item => item.id === 1), // Truffle Arancini
+    menuItems.find(item => item.id === 6), // Himalayan Lamb Tenderloin  
+    menuItems.find(item => item.id === 21), // Chocolate Soufflé
+  ].filter(Boolean);
 
   const handleAddToCart = (item: any) => {
     addToCart(item);
