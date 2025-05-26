@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
@@ -11,10 +10,15 @@ import { toast } from '@/hooks/use-toast';
 import { useShoppingContext } from '@/context/ShoppingContext';
 
 const Menu = () => {
-  const { addToCart, addToLiked, isItemLiked } = useShoppingContext();
+  const { addToCart, addToLiked, likedItems } = useShoppingContext();
   const [activeCategory, setActiveCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Helper function to check if item is liked
+  const isItemLiked = (itemId: number) => {
+    return likedItems.some(item => item.id === itemId);
+  };
 
   const categories = [
     { id: 'all', name: 'All Items' },
