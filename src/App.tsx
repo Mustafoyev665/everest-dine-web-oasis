@@ -19,6 +19,7 @@ import Liked from "./pages/Liked";
 import Checkout from "./pages/Checkout";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/cart" element={<Cart />} />
               <Route path="/liked" element={<Liked />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
