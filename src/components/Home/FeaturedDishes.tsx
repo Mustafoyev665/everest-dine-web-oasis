@@ -43,10 +43,10 @@ const FeaturedDishes = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="font-display text-4xl md:text-5xl font-bold gradient-text mb-6">
+          <h2 className="font-display text-4xl md:text-5xl font-bold gradient-text mb-6 animate-pulse">
             Signature Masterpieces
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">
             Each dish is a carefully orchestrated symphony of flavors, crafted by our world-renowned chefs
           </p>
         </div>
@@ -56,7 +56,7 @@ const FeaturedDishes = () => {
           {dishes.map((dish, index) => (
             <Card 
               key={dish.id} 
-              className="group glass-card hover:bg-white/10 transition-all duration-500 overflow-hidden animate-fade-in-up"
+              className="group glass-card hover:bg-white/10 transition-all duration-500 overflow-hidden animate-fade-in-up transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-400/20"
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <div className="relative overflow-hidden">
@@ -72,7 +72,7 @@ const FeaturedDishes = () => {
                   <Button 
                     size="sm" 
                     variant="ghost" 
-                    className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white p-2"
+                    className="bg-white/10 backdrop-blur-sm hover:bg-pink-500/20 text-white p-2 border border-pink-400/30 shadow-lg shadow-pink-400/20 hover:shadow-pink-400/40 transition-all duration-300"
                   >
                     <Heart className="w-4 h-4" />
                   </Button>
@@ -81,7 +81,7 @@ const FeaturedDishes = () => {
                 <div className="absolute bottom-4 left-4 right-4">
                   <div className="flex items-center space-x-2 mb-2">
                     <div className="flex items-center space-x-1">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-current animate-pulse" />
                       <span className="text-white font-semibold">{dish.rating}</span>
                     </div>
                     <span className="text-gray-300 text-sm">• {dish.chef}</span>
@@ -90,7 +90,8 @@ const FeaturedDishes = () => {
                     {dish.dietary.map((tag, i) => (
                       <span 
                         key={i}
-                        className="bg-yellow-400/20 text-yellow-400 text-xs px-2 py-1 rounded-full"
+                        className="bg-cyan-400/20 text-cyan-400 text-xs px-2 py-1 rounded-full border border-cyan-400/30 animate-bounce-slow"
+                        style={{ animationDelay: `${i * 0.3}s` }}
                       >
                         {tag}
                       </span>
@@ -101,10 +102,10 @@ const FeaturedDishes = () => {
 
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-display text-xl font-semibold text-white group-hover:text-yellow-400 transition-colors duration-200">
+                  <h3 className="font-display text-xl font-semibold text-white group-hover:text-cyan-400 transition-colors duration-300">
                     {dish.name}
                   </h3>
-                  <span className="text-2xl font-bold gradient-text">
+                  <span className="text-2xl font-bold gradient-text animate-pulse">
                     ${dish.price}
                   </span>
                 </div>
@@ -115,14 +116,14 @@ const FeaturedDishes = () => {
 
                 <div className="flex space-x-3">
                   <Button 
-                    className="flex-1 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold"
+                    className="flex-1 bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 hover:from-cyan-500 hover:to-purple-600 font-semibold shadow-lg shadow-cyan-400/30 hover:shadow-cyan-400/50 transition-all duration-300"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Add to Cart
                   </Button>
                   <Button 
                     variant="outline" 
-                    className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-slate-900"
+                    className="border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:text-cyan-300 shadow-lg shadow-cyan-400/20 hover:shadow-cyan-400/40 transition-all duration-300"
                   >
                     Details
                   </Button>
@@ -137,7 +138,7 @@ const FeaturedDishes = () => {
           <Button 
             variant="outline" 
             size="lg"
-            className="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-slate-900 font-semibold px-8"
+            className="border-2 border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:text-cyan-300 font-semibold px-8 shadow-lg shadow-cyan-400/20 hover:shadow-cyan-400/40 transition-all duration-300 animate-float"
           >
             Explore Full Menu
           </Button>
