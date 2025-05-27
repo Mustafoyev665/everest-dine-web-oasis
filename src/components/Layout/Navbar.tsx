@@ -1,16 +1,23 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, Heart, ShoppingCart } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, User, Heart, ShoppingCart, LogOut } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useShoppingContext } from '@/context/ShoppingContext';
+import { useAuth } from '@/hooks/useAuth';
+import { useSupabaseSync } from '@/hooks/useSupabaseSync';
 import { Badge } from "@/components/ui/badge";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { cartCount, likedCount } = useShoppingContext();
+  const { user, signOut, isAdmin } = useAuth();
+  
+  // Initialize Supabase sync
+  useSupabaseSync();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +26,11 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -59,6 +71,15 @@ const Navbar = () => {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                to="/admin/dashboard"
+                className="relative text-sm font-medium transition-colors duration-200 hover:text-yellow-400 group text-purple-400"
+              >
+                Admin
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -89,12 +110,29 @@ const Navbar = () => {
               </Button>
             </Link>
             
-            <Link to="/login">
-              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
-                <User className="w-4 h-4 mr-2" />
-                Sign In
-              </Button>
-            </Link>
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-300">
+                  {user.user_metadata?.full_name || user.email}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-300 hover:text-yellow-400"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Link to="/login">
+                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
+                  <User className="w-4 h-4 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
+            )}
             
             <Link to="/reservations">
               <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold">
@@ -132,6 +170,15 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link
+                  to="/admin/dashboard"
+                  className="block text-lg font-medium transition-colors duration-200 text-purple-400 hover:text-yellow-400"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Admin Dashboard
+                </Link>
+              )}
               <div className="flex space-x-4 mt-4">
                 <Link to="/liked" onClick={() => setIsOpen(false)}>
                   <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
@@ -159,12 +206,31 @@ const Navbar = () => {
                 </Link>
               </div>
               <div className="pt-4 space-y-3">
-                <Button variant="outline" className="w-full" asChild>
-                  <Link to="/login" onClick={() => setIsOpen(false)}>
-                    <User className="w-4 h-4 mr-2" />
-                    Sign In
-                  </Link>
-                </Button>
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="text-gray-300 text-center">
+                      {user.user_metadata?.full_name || user.email}
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      onClick={() => {
+                        handleSignOut();
+                        setIsOpen(false);
+                      }}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </div>
+                ) : (
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link to="/login" onClick={() => setIsOpen(false)}>
+                      <User className="w-4 h-4 mr-2" />
+                      Sign In
+                    </Link>
+                  </Button>
+                )}
                 <Button className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600" asChild>
                   <Link to="/reservations" onClick={() => setIsOpen(false)}>
                     Reserve Table

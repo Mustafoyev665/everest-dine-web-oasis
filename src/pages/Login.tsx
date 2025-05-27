@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,12 +10,11 @@ import Footer from '@/components/Layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
-  rememberMe: z.boolean().optional(),
+  password: z.string().min(1, { message: 'Password is required.' }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -23,38 +22,29 @@ type FormData = z.infer<typeof formSchema>;
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { signIn, user } = useAuth();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
-      rememberMe: false,
     },
   });
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
   
   const onSubmit = async (data: FormData) => {
-    // Here you would normally make an API call to log in
-    console.log('Login data:', data);
-    
-    // Simulate login for demonstration
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Login successful!",
-        description: "Welcome back to Everest Rest.",
-      });
-      
-      // Redirect to home page after successful login
+      await signIn(data.email, data.password);
       navigate('/');
     } catch (error) {
-      toast({
-        title: "Login failed",
-        description: "Please check your credentials and try again.",
-        variant: "destructive",
-      });
+      // Error handling is done in the signIn function
     }
   };
   
@@ -121,32 +111,7 @@ const Login = () => {
                           </button>
                         </div>
                       </FormControl>
-                      <div className="flex justify-between items-center mt-2">
-                        <FormMessage />
-                        <Link to="/forgot-password" className="text-sm text-yellow-400 hover:text-yellow-300">
-                          Forgot password?
-                        </Link>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="rememberMe"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 accent-yellow-400 rounded border-gray-300"
-                          checked={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormLabel className="text-sm text-gray-400 cursor-pointer">
-                        Remember me
-                      </FormLabel>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

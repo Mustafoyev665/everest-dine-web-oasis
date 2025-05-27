@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,7 +8,7 @@ import { Eye, EyeOff, LogIn, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -20,6 +20,7 @@ type FormData = z.infer<typeof formSchema>;
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { signIn, user, isAdmin } = useAuth();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -28,26 +29,29 @@ const AdminLogin = () => {
       password: '',
     },
   });
+
+  // Redirect if already logged in as admin
+  useEffect(() => {
+    if (user && isAdmin) {
+      navigate('/admin/dashboard');
+    } else if (user && !isAdmin) {
+      navigate('/');
+    }
+  }, [user, isAdmin, navigate]);
   
   const onSubmit = async (data: FormData) => {
-    // Check credentials
-    if (data.email === 'mustafoyev7788@gmail.com' && data.password === '12345678!@WEB') {
-      // Store admin session
-      localStorage.setItem('adminAuth', 'true');
-      localStorage.setItem('adminEmail', data.email);
-      
-      toast({
-        title: "Login successful!",
-        description: "Welcome to admin panel.",
-      });
-      
+    try {
+      if (data.email !== 'mustafoyev7788@gmail.com' || data.password !== '12345678!@WEB') {
+        form.setError('root', {
+          message: 'Invalid admin credentials'
+        });
+        return;
+      }
+
+      await signIn(data.email, data.password);
       navigate('/admin/dashboard');
-    } else {
-      toast({
-        title: "Invalid credentials",
-        description: "Please check your email and password.",
-        variant: "destructive",
-      });
+    } catch (error) {
+      // Error handling is done in the signIn function
     }
   };
   
@@ -123,6 +127,12 @@ const AdminLogin = () => {
                   </FormItem>
                 )}
               />
+
+              {form.formState.errors.root && (
+                <div className="text-red-500 text-sm text-center">
+                  {form.formState.errors.root.message}
+                </div>
+              )}
               
               <Button 
                 type="submit" 

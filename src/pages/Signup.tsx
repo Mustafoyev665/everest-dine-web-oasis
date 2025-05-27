@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ import Footer from '@/components/Layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -31,6 +31,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { signUp, user } = useAuth();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -42,29 +43,20 @@ const Signup = () => {
       terms: false,
     },
   });
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
   
   const onSubmit = async (data: FormData) => {
-    // Here you would normally make an API call to register
-    console.log('Signup data:', data);
-    
-    // Simulate registration for demonstration
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Account created successfully!",
-        description: "Welcome to Everest Rest. You can now log in.",
-      });
-      
-      // Redirect to login page after successful registration
+      await signUp(data.email, data.password, data.name);
       navigate('/login');
     } catch (error) {
-      toast({
-        title: "Registration failed",
-        description: "There was an error creating your account. Please try again.",
-        variant: "destructive",
-      });
+      // Error handling is done in the signUp function
     }
   };
   

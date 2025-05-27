@@ -28,6 +28,8 @@ interface ShoppingContextType {
   cartCount: number;
   likedCount: number;
   cartTotal: number;
+  setCartItems: (items: MenuItem[]) => void;
+  setLikedItems: (items: MenuItem[]) => void;
 }
 
 // Create the context with initial state
@@ -45,6 +47,8 @@ const ShoppingContext = createContext<ShoppingContextType>({
   cartCount: 0,
   likedCount: 0,
   cartTotal: 0,
+  setCartItems: () => {},
+  setLikedItems: () => {},
 });
 
 // Create the provider component
@@ -82,10 +86,6 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === itemToAdd.id);
       if (existingItem) {
-        toast({
-          title: "Item updated in cart",
-          description: `${itemToAdd.name}'s quantity has been updated in your cart.`,
-        });
         return prevItems.map((item) =>
           item.id === itemToAdd.id
             ? { ...item, quantity: (item.quantity || 1) + 1 }
@@ -93,10 +93,6 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         );
       }
       
-      toast({
-        title: "Item added to cart",
-        description: `${itemToAdd.name} has been added to your cart.`,
-      });
       return [...prevItems, { ...itemToAdd, quantity: 1 }];
     });
   };
@@ -125,10 +121,6 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const clearCart = () => {
     setCartItems([]);
-    toast({
-      title: "Cart cleared",
-      description: "All items have been removed from your cart.",
-    });
   };
 
   // Liked items operations
@@ -136,17 +128,9 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setLikedItems((prevItems) => {
       const existingItem = prevItems.find((i) => i.id === item.id);
       if (existingItem) {
-        toast({
-          title: "Already in favorites",
-          description: `${item.name} is already in your favorites.`,
-        });
         return prevItems;
       }
       
-      toast({
-        title: "Added to favorites",
-        description: `${item.name} has been added to your favorites.`,
-      });
       return [...prevItems, item];
     });
   };
@@ -183,6 +167,8 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         cartCount,
         likedCount,
         cartTotal,
+        setCartItems,
+        setLikedItems,
       }}
     >
       {children}

@@ -9,6 +9,156 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      cart_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          item_category: string
+          item_description: string | null
+          item_id: number
+          item_name: string
+          item_price: number
+          quantity: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          item_category: string
+          item_description?: string | null
+          item_id: number
+          item_name: string
+          item_price: number
+          quantity?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          item_category?: string
+          item_description?: string | null
+          item_id?: number
+          item_name?: string
+          item_price?: number
+          quantity?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          status: string | null
+          subject: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          status?: string | null
+          subject?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          status?: string | null
+          subject?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      liked_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          item_category: string
+          item_description: string | null
+          item_id: number
+          item_name: string
+          item_price: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          item_category: string
+          item_description?: string | null
+          item_id: number
+          item_name: string
+          item_price: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          item_category?: string
+          item_description?: string | null
+          item_id?: number
+          item_name?: string
+          item_price?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          created_at: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          delivery_address: string
+          id: string
+          order_items: Json
+          status: string | null
+          total_amount: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          delivery_address: string
+          id?: string
+          order_items: Json
+          status?: string | null
+          total_amount: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          delivery_address?: string
+          id?: string
+          order_items?: Json
+          status?: string | null
+          total_amount?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -33,6 +183,51 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      reservations: {
+        Row: {
+          created_at: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          party_size: number
+          reservation_date: string
+          reservation_time: string
+          special_requests: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          party_size: number
+          reservation_date: string
+          reservation_time: string
+          special_requests?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          party_size?: number
+          reservation_date?: string
+          reservation_time?: string
+          special_requests?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
