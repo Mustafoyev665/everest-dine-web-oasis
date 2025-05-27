@@ -1,111 +1,97 @@
 
-import React, { useState } from 'react';
-import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, ChevronRight, Users } from 'lucide-react';
-import Navbar from '@/components/Layout/Navbar';
-import Footer from '@/components/Layout/Footer';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Calendar, Users, Clock, Send } from 'lucide-react';
+import Navbar from '@/components/Layout/Navbar';
+import Footer from '@/components/Layout/Footer';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from "@/hooks/use-toast";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useOrderManagement } from '@/hooks/useOrderManagement';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
-// Time slots for reservations
-const timeSlots = [
-  '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', 
-  '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM'
-];
-
-// Table types
-const tableTypes = [
-  {
-    id: 'standard',
-    name: 'Standard Table',
-    description: 'Regular dining table for 2-4 guests',
-    image: 'standard-table',
-  },
-  {
-    id: 'booth',
-    name: 'Booth',
-    description: 'Comfortable booth seating for 2-6 guests',
-    image: 'booth-table',
-  },
-  {
-    id: 'private',
-    name: 'Private Room',
-    description: 'Exclusive private dining for 6-12 guests',
-    image: 'private-room',
-  }
-];
-
-// Form schema
 const formSchema = z.object({
-  name: z.string().min(2, { message: 'Please enter your full name' }),
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  phone: z.string().min(10, { message: 'Please enter a valid phone number' }),
-  guests: z.number().min(1).max(12),
-  date: z.date({
-    required_error: "Please select a date",
-  }),
-  time: z.string({
-    required_error: "Please select a time slot",
-  }),
-  tableType: z.string({
-    required_error: "Please select a table type",
-  }),
+  name: z.string().min(2, { message: 'Ism kamida 2 ta harf bo\'lishi kerak.' }),
+  email: z.string().email({ message: 'To\'g\'ri email manzil kiriting.' }),
+  phone: z.string().min(9, { message: 'Telefon raqam kiriting.' }),
+  date: z.string().min(1, { message: 'Sanani tanlang.' }),
+  time: z.string().min(1, { message: 'Vaqtni tanlang.' }),
+  partySize: z.number().min(1, { message: 'Kamida 1 kishi bo\'lishi kerak.' }).max(20, { message: 'Maksimal 20 kishi.' }),
   specialRequests: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 const Reservations = () => {
-  // State for selected time and table type
-  const [selectedTime, setSelectedTime] = useState('');
-  const [selectedTableType, setSelectedTableType] = useState('');
+  const { submitReservation, loading } = useOrderManagement();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      email: '',
+      email: user?.email || '',
       phone: '',
-      guests: 2,
+      date: '',
+      time: '',
+      partySize: 2,
       specialRequests: '',
     },
   });
-  
-  // Handle time slot selection
-  const handleTimeSelect = (time: string) => {
-    setSelectedTime(time);
-    form.setValue('time', time);
+
+  const onSubmit = async (data: FormData) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      await submitReservation(data);
+      form.reset();
+    } catch (error) {
+      // Error handling is done in useOrderManagement
+    }
   };
-  
-  // Handle table type selection
-  const handleTableTypeSelect = (tableType: string) => {
-    setSelectedTableType(tableType);
-    form.setValue('tableType', tableType);
-  };
-  
-  const onSubmit = (data: FormData) => {
-    console.log('Reservation data:', data);
-    
-    // Here you would normally make an API call to save the reservation
-    toast({
-      title: "Reservation Request Submitted!",
-      description: "We've received your reservation request and will confirm it shortly.",
-    });
-    
-    // Reset form after successful submission
-    form.reset();
-    setSelectedTime('');
-    setSelectedTableType('');
-  };
+
+  const timeSlots = [
+    '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
+    '20:00', '20:30', '21:00', '21:30', '22:00'
+  ];
+
+  // Get tomorrow's date as minimum date
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDate = tomorrow.toISOString().split('T')[0];
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-slate-900">
+        <Navbar />
+        <div className="pt-32 pb-24">
+          <div className="max-w-2xl mx-auto px-4 text-center">
+            <div className="glass-card p-8">
+              <h2 className="text-2xl font-display font-bold mb-4">Login talab qilinadi</h2>
+              <p className="text-gray-400 mb-6">
+                Stol bronlash uchun tizimga kirishingiz kerak.
+              </p>
+              <Button 
+                className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold"
+                onClick={() => navigate('/login')}
+              >
+                Tizimga kirish
+              </Button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -116,101 +102,79 @@ const Reservations = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-display font-bold gradient-text mb-4">
-              Reserve Your Table
+              Stol bronlash
             </h1>
             <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto">
-              Secure your place for an extraordinary dining experience
+              Unutilmas kechada sizning stolingizni bronga oling
             </p>
           </div>
         </div>
       </div>
       
       {/* Reservation Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-24">
-        <div className="glass-card p-8 md:p-12 animate-fade-in">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left Column - Personal Details */}
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-display font-bold mb-6">Your Information</h2>
-                  
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          {/* Reservation Form */}
+          <div className="glass-card p-8 animate-fade-in">
+            <h2 className="text-2xl font-display font-bold mb-6">Bron ma'lumotlari</h2>
+            
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">To'liq ism</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ismingiz" className="bg-white/5 border-white/10 text-white" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="email@example.com" className="bg-white/5 border-white/10 text-white" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Telefon</FormLabel>
+                      <FormControl>
+                        <Input type="tel" placeholder="+998 90 123 45 67" className="bg-white/5 border-white/10 text-white" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="date"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300">Full Name</FormLabel>
+                        <FormLabel className="text-gray-300">Sana</FormLabel>
                         <FormControl>
-                          <Input placeholder="John Smith" className="bg-white/5 border-white/10 text-white" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-300">Email</FormLabel>
-                        <FormControl>
-                          <Input type="email" placeholder="you@example.com" className="bg-white/5 border-white/10 text-white" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-300">Phone</FormLabel>
-                        <FormControl>
-                          <Input placeholder="(555) 123-4567" className="bg-white/5 border-white/10 text-white" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="guests"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-300">Number of Guests</FormLabel>
-                        <FormControl>
-                          <div className="flex items-center">
-                            <Users className="mr-2 h-4 w-4 text-gray-400" />
-                            <Input 
-                              type="number" 
-                              min="1" 
-                              max="12" 
-                              className="bg-white/5 border-white/10 text-white w-24" 
-                              {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="specialRequests"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-300">Special Requests (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Any dietary restrictions or special occasions?" 
-                            className="bg-white/5 border-white/10 text-white resize-none h-32" 
+                          <Input 
+                            type="date" 
+                            min={minDate}
+                            className="bg-white/5 border-white/10 text-white" 
                             {...field} 
                           />
                         </FormControl>
@@ -218,157 +182,135 @@ const Reservations = () => {
                       </FormItem>
                     )}
                   />
-                </div>
-                
-                {/* Right Column - Date, Time, Table Selection */}
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-display font-bold mb-6">Reservation Details</h2>
-                  
-                  {/* Date Picker */}
+
                   <FormField
                     control={form.control}
-                    name="date"
+                    name="time"
                     render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel className="text-gray-300">Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full bg-white/5 border-white/10 text-left flex items-center",
-                                  !field.value && "text-gray-400"
-                                )}
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Select a date</span>
-                                )}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0 bg-slate-800 border-white/10" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => {
-                                // Disable dates in the past
-                                const today = new Date();
-                                today.setHours(0, 0, 0, 0);
-                                return date < today;
-                              }}
-                              initialFocus
-                              className="p-3 pointer-events-auto"
-                            />
-                          </PopoverContent>
-                        </Popover>
+                      <FormItem>
+                        <FormLabel className="text-gray-300">Vaqt</FormLabel>
+                        <FormControl>
+                          <select 
+                            className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
+                            {...field}
+                          >
+                            <option value="">Vaqtni tanlang</option>
+                            {timeSlots.map((time) => (
+                              <option key={time} value={time} className="bg-slate-800">
+                                {time}
+                              </option>
+                            ))}
+                          </select>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  
-                  {/* Time Slots */}
-                  <div className="space-y-2">
-                    <FormLabel className="text-gray-300">Time</FormLabel>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                      {timeSlots.map((time) => (
-                        <Button
-                          key={time}
-                          type="button"
-                          variant={selectedTime === time ? "default" : "outline"}
-                          className={cn(
-                            "w-full border-white/10 bg-white/5",
-                            selectedTime === time && "bg-yellow-400 text-slate-900 border-yellow-400"
-                          )}
-                          onClick={() => handleTimeSelect(time)}
-                        >
-                          <Clock className="mr-2 h-4 w-4" />
-                          {time}
-                        </Button>
-                      ))}
-                    </div>
-                    {form.formState.errors.time && (
-                      <p className="text-sm font-medium text-destructive mt-1">
-                        {form.formState.errors.time.message}
-                      </p>
-                    )}
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="partySize"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Kishilar soni</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          min="1" 
+                          max="20"
+                          placeholder="2" 
+                          className="bg-white/5 border-white/10 text-white" 
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="specialRequests"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Maxsus so'rovlar (ixtiyoriy)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Tug'ilgan kun, maxsus diet, allergiya va boshqalar..." 
+                          className="bg-white/5 border-white/10 text-white min-h-[100px]" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 mt-4"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="animate-spin mr-2 h-4 w-4 border-2 border-slate-900 border-t-transparent rounded-full" />
+                  ) : (
+                    <Send className="mr-2 h-4 w-4" />
+                  )}
+                  Stol bronlash
+                </Button>
+              </form>
+            </Form>
+          </div>
+          
+          {/* Information */}
+          <div className="space-y-8">
+            <div className="glass-card p-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <h2 className="text-2xl font-display font-bold mb-6">Bron qoidalari</h2>
+              
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <Calendar className="w-6 h-6 text-yellow-400 mt-1" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Oldindan bron</h3>
+                    <p className="text-gray-400">Kamida 1 kun oldin bron qiling</p>
                   </div>
-                  
-                  {/* Table Types */}
-                  <div className="space-y-4">
-                    <FormLabel className="text-gray-300">Table Type</FormLabel>
-                    {tableTypes.map((table) => (
-                      <div 
-                        key={table.id}
-                        className={cn(
-                          "border rounded-lg p-4 cursor-pointer transition-all",
-                          selectedTableType === table.id 
-                            ? "border-yellow-400 bg-yellow-400/10" 
-                            : "border-white/10 bg-white/5 hover:bg-white/10"
-                        )}
-                        onClick={() => handleTableTypeSelect(table.id)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-semibold text-white">{table.name}</h3>
-                            <p className="text-sm text-gray-400">{table.description}</p>
-                          </div>
-                          <div className={cn(
-                            "w-5 h-5 rounded-full border",
-                            selectedTableType === table.id
-                              ? "border-yellow-400 bg-yellow-400" 
-                              : "border-white/30"
-                          )}></div>
-                        </div>
-                      </div>
-                    ))}
-                    {form.formState.errors.tableType && (
-                      <p className="text-sm font-medium text-destructive mt-1">
-                        {form.formState.errors.tableType.message}
-                      </p>
-                    )}
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <Clock className="w-6 h-6 text-yellow-400 mt-1" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Tasdiqlash</h3>
+                    <p className="text-gray-400">24 soat ichida tasdiqlash xabari keladi</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <Users className="w-6 h-6 text-yellow-400 mt-1" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Katta guruhlar</h3>
+                    <p className="text-gray-400">10+ kishi uchun alohida shartlar</p>
                   </div>
                 </div>
               </div>
+            </div>
+            
+            <div className="glass-card p-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <h2 className="text-2xl font-display font-bold mb-6">Ish vaqti</h2>
               
-              {/* Submit Button */}
-              <div className="pt-6">
-                <Button 
-                  type="submit"
-                  className="w-full md:w-auto bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold text-lg py-6 h-auto"
-                >
-                  Complete Reservation <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Dushanba - Payshanba</h3>
+                  <p className="text-gray-400">17:00 - 22:00</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Juma - Yakshanba</h3>
+                  <p className="text-gray-400">17:00 - 23:00</p>
+                </div>
               </div>
-            </form>
-          </Form>
-        </div>
-        
-        {/* Policy Information */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <h3 className="text-xl font-display font-semibold mb-3">Reservation Policy</h3>
-            <p className="text-gray-400 text-sm">
-              Reservations can be made up to 30 days in advance. We hold reservations for 15 minutes past the scheduled time.
-            </p>
-          </div>
-          
-          <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <h3 className="text-xl font-display font-semibold mb-3">Cancellation Policy</h3>
-            <p className="text-gray-400 text-sm">
-              Cancellations must be made at least 24 hours before your reservation to avoid a cancellation fee.
-            </p>
-          </div>
-          
-          <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <h3 className="text-xl font-display font-semibold mb-3">Large Parties</h3>
-            <p className="text-gray-400 text-sm">
-              For parties of more than 8 guests, please contact us directly at (555) 123-4567 for special arrangements.
-            </p>
+            </div>
           </div>
         </div>
       </div>

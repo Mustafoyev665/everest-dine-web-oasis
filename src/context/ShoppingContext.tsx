@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
+import { useSupabaseSync } from "@/hooks/useSupabaseSync";
 
 // Define the types for our items
 export interface MenuItem {
@@ -64,6 +65,9 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return savedLiked ? JSON.parse(savedLiked) : [];
   });
 
+  // Initialize Supabase sync
+  useSupabaseSync();
+
   // Calculate derived values
   const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
   const likedCount = likedItems.length;
@@ -103,8 +107,8 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     
     if (itemToRemove) {
       toast({
-        title: "Item removed",
-        description: `${itemToRemove.name} has been removed from your cart.`,
+        title: "Mahsulot o'chirildi",
+        description: `${itemToRemove.name} savatdan o'chirildi.`,
       });
     }
   };
@@ -141,8 +145,8 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     
     if (itemToRemove) {
       toast({
-        title: "Removed from favorites",
-        description: `${itemToRemove.name} has been removed from your favorites.`,
+        title: "Sevimlilardan o'chirildi",
+        description: `${itemToRemove.name} sevimlilardan o'chirildi.`,
       });
     }
   };
