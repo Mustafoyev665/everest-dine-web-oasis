@@ -30,10 +30,10 @@ const Menu = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center">
             <h1 className="text-3xl md:text-5xl font-display font-bold gradient-text mb-4 animate-neon-glow">
-              Exquisite Menu
+              Ajoyib Menyu
             </h1>
             <p className="text-lg md:text-2xl text-gray-400 max-w-3xl mx-auto">
-              Discover our collection of premium dishes crafted by world-class chefs
+              Dunyoning eng yaxshi oshpazlari tomonidan tayyorlangan premium taomlarni kashf eting
             </p>
           </div>
         </div>
