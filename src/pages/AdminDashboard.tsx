@@ -20,12 +20,22 @@ import {
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
+interface OrderItem {
+  id: number;
+  name: string;
+  description?: string;
+  price: number;
+  category: string;
+  quantity: number;
+  image?: string;
+}
+
 interface Order {
   id: string;
   customer_name: string;
   customer_email: string;
   delivery_address: string;
-  order_items: any[];
+  order_items: OrderItem[];
   total_amount: number;
   status: string;
   created_at: string;
@@ -80,7 +90,14 @@ const AdminDashboard = () => {
         supabase.from('contact_messages').select('*').order('created_at', { ascending: false })
       ]);
 
-      if (ordersData.data) setOrders(ordersData.data);
+      if (ordersData.data) {
+        // Convert the Json type to OrderItem[] for proper typing
+        const typedOrders = ordersData.data.map(order => ({
+          ...order,
+          order_items: order.order_items as OrderItem[]
+        }));
+        setOrders(typedOrders);
+      }
       if (reservationsData.data) setReservations(reservationsData.data);
       if (messagesData.data) setMessages(messagesData.data);
     } catch (error) {
@@ -294,7 +311,7 @@ const AdminDashboard = () => {
                 <CardContent>
                   <div className="space-y-2 mb-4">
                     <h4 className="font-semibold text-white">Buyurtma mahsulotlari:</h4>
-                    {order.order_items.map((item: any, index: number) => (
+                    {order.order_items.map((item: OrderItem, index: number) => (
                       <div key={index} className="flex justify-between text-gray-300">
                         <span>{item.name} x {item.quantity}</span>
                         <span>${(item.price * item.quantity).toFixed(2)}</span>

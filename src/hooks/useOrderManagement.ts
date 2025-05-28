@@ -25,6 +25,17 @@ export const useOrderManagement = () => {
 
     setLoading(true);
     try {
+      // Convert cartItems to a JSON-compatible format
+      const orderItems = cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        category: item.category,
+        quantity: item.quantity || 1,
+        image: item.image
+      }));
+
       const { error } = await supabase
         .from('orders')
         .insert({
@@ -32,7 +43,7 @@ export const useOrderManagement = () => {
           customer_name: orderData.fullName,
           customer_email: orderData.email,
           delivery_address: `${orderData.address}, ${orderData.city}, ${orderData.state} ${orderData.zipCode}`,
-          order_items: cartItems,
+          order_items: orderItems,
           total_amount: orderData.total,
           status: 'pending'
         });

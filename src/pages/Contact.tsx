@@ -38,7 +38,13 @@ const Contact = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await submitContactMessage(data);
+      await submitContactMessage({
+        name: data.name,
+        email: data.email,
+        message: data.message,
+        phone: data.phone || undefined,
+        subject: data.subject || undefined,
+      });
       form.reset();
     } catch (error) {
       // Error handling is done in useOrderManagement

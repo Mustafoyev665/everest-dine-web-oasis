@@ -51,7 +51,15 @@ const Reservations = () => {
     }
 
     try {
-      await submitReservation(data);
+      await submitReservation({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        date: data.date,
+        time: data.time,
+        partySize: data.partySize,
+        specialRequests: data.specialRequests || undefined,
+      });
       form.reset();
     } catch (error) {
       // Error handling is done in useOrderManagement
