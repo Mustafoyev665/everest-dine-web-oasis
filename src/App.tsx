@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,11 @@ import Liked from "./pages/Liked";
 import Checkout from "./pages/Checkout";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminLayout from "./components/Admin/AdminLayout";
+import AdminOverview from "./pages/Admin/AdminOverview";
+import AdminOrders from "./pages/Admin/AdminOrders";
+import AdminReservations from "./pages/Admin/AdminReservations";
+import AdminMessages from "./pages/Admin/AdminMessages";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -47,6 +51,20 @@ const App = () => (
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
+                <Route 
+                  path="/admin" 
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <AdminLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="dashboard" element={<AdminOverview />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="reservations" element={<AdminReservations />} />
+                  <Route path="messages" element={<AdminMessages />} />
+                </Route>
+                {/* Keep the old dashboard route for backward compatibility */}
                 <Route 
                   path="/admin/dashboard" 
                   element={
