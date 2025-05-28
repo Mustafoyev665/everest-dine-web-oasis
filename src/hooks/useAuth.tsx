@@ -32,9 +32,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isAdmin = user?.email === 'mustafoyev7788@gmail.com';
 
   useEffect(() => {
+    let mounted = true;
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!mounted) return;
+        
+        console.log('Auth event:', event, 'Session:', session);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -43,17 +48,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      setLoading(true);
+      
+      // For development, we'll use signUp with email confirmation disabled
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -67,47 +79,88 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
 
-      toast({
-        title: "Account created successfully!",
-        description: "You can now sign in to your account.",
-      });
+      // Check if user was created and confirmed automatically
+      if (data.user && data.session) {
+        toast({
+          title: "Account created successfully!",
+          description: "You are now logged in.",
+        });
+        return;
+      }
+
+      // If email confirmation is enabled
+      if (data.user && !data.session) {
+        toast({
+          title: "Account created!",
+          description: "Please check your email to confirm your account.",
+        });
+        return;
+      }
+
     } catch (error: any) {
+      console.error('Signup error:', error);
       toast({
         title: "Sign up failed",
-        description: error.message,
+        description: error.message || "An error occurred during signup",
         variant: "destructive",
       });
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      setLoading(true);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        // Handle specific error cases
+        if (error.message.includes('Email not confirmed')) {
+          toast({
+            title: "Email not confirmed",
+            description: "Please check your email and click the confirmation link before signing in.",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('Invalid login credentials')) {
+          toast({
+            title: "Invalid credentials",
+            description: "Please check your email and password.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Sign in failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
         throw error;
       }
 
-      toast({
-        title: "Signed in successfully!",
-        description: "Welcome back to Everest Rest.",
-      });
+      if (data.user && data.session) {
+        toast({
+          title: "Signed in successfully!",
+          description: "Welcome back to Everest Rest.",
+        });
+      }
+
     } catch (error: any) {
-      toast({
-        title: "Sign in failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Signin error:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) {
         throw error;
@@ -118,11 +171,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: "You have been logged out.",
       });
     } catch (error: any) {
+      console.error('Signout error:', error);
       toast({
         title: "Sign out failed",
         description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -22,7 +22,7 @@ type FormData = z.infer<typeof formSchema>;
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
+  const { signIn, user, loading } = useAuth();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -34,17 +34,18 @@ const Login = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
   
   const onSubmit = async (data: FormData) => {
     try {
       await signIn(data.email, data.password);
-      navigate('/');
+      // If login successful, user will be redirected by useEffect
     } catch (error) {
       // Error handling is done in the signIn function
+      console.error('Login error:', error);
     }
   };
   
@@ -119,9 +120,9 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold"
-                  disabled={form.formState.isSubmitting}
+                  disabled={form.formState.isSubmitting || loading}
                 >
-                  {form.formState.isSubmitting ? (
+                  {form.formState.isSubmitting || loading ? (
                     <div className="h-5 w-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
                   ) : (
                     <>
