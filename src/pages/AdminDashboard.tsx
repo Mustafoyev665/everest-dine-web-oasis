@@ -94,7 +94,7 @@ const AdminDashboard = () => {
         // Convert the Json type to OrderItem[] for proper typing
         const typedOrders = ordersData.data.map(order => ({
           ...order,
-          order_items: order.order_items as OrderItem[]
+          order_items: order.order_items as unknown as OrderItem[]
         }));
         setOrders(typedOrders);
       }
