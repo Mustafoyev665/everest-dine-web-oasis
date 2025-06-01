@@ -13,7 +13,7 @@ interface Translation {
 interface LanguageContextType {
   currentLanguage: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string>) => string;
   translations: Translation[];
   loading: boolean;
 }
@@ -58,11 +58,21 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.setItem('language', lang);
   };
 
-  const t = (key: string): string => {
+  const t = (key: string, params?: Record<string, string>): string => {
     const translation = translations.find(
       t => t.key === key && t.language === currentLanguage
     );
-    return translation?.value || key;
+    
+    let value = translation?.value || key;
+    
+    // Replace parameters in the translation
+    if (params) {
+      Object.entries(params).forEach(([paramKey, paramValue]) => {
+        value = value.replace(`{${paramKey}}`, paramValue);
+      });
+    }
+    
+    return value;
   };
 
   return (
