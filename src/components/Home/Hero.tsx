@@ -2,8 +2,11 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Clock } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Hero = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background with overlay */}
@@ -20,7 +23,7 @@ const Hero = () => {
           {/* Badge */}
           <div className="inline-flex items-center space-x-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-6 py-2 mb-8">
             <Star className="w-4 h-4 text-yellow-400 fill-current" />
-            <span className="text-sm font-medium text-gray-300">Michelin Star Restaurant</span>
+            <span className="text-sm font-medium text-gray-300">{t('hero.badge')}</span>
             <Star className="w-4 h-4 text-yellow-400 fill-current" />
           </div>
 
@@ -28,25 +31,24 @@ const Hero = () => {
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-6">
             <span className="block gradient-text">Everest Rest</span>
             <span className="block text-3xl md:text-4xl lg:text-5xl text-gray-300 font-light mt-2">
-              Peak Culinary Excellence
+              {t('hero.subtitle')}
             </span>
           </h1>
 
           {/* Description */}
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-8 leading-relaxed">
-            Experience extraordinary flavors at the summit of fine dining. Where tradition meets innovation 
-            in every carefully crafted dish.
+            {t('hero.description')}
           </p>
 
           {/* Location and hours */}
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 mb-12">
             <div className="flex items-center space-x-2 text-gray-300">
               <MapPin className="w-5 h-5 text-yellow-400" />
-              <span>Downtown Manhattan, NYC</span>
+              <span>{t('hero.location')}</span>
             </div>
             <div className="flex items-center space-x-2 text-gray-300">
               <Clock className="w-5 h-5 text-yellow-400" />
-              <span>Open Daily 5:00 PM - 11:00 PM</span>
+              <span>{t('hero.hours')}</span>
             </div>
           </div>
 
@@ -56,33 +58,43 @@ const Hero = () => {
               size="lg" 
               className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold text-lg px-8 py-6 rounded-full transform hover:scale-105 transition-all duration-200 shadow-2xl"
             >
-              Reserve Your Table
+              {t('hero.reserve_btn')}
             </Button>
             <Button 
               variant="outline" 
               size="lg"
               className="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-slate-900 font-semibold text-lg px-8 py-6 rounded-full transform hover:scale-105 transition-all duration-200"
             >
-              Explore Menu
+              {t('hero.menu_btn')}
             </Button>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto">
-            {[
-              { number: '15+', label: 'Years of Excellence' },
-              { number: '50K+', label: 'Happy Guests' },
-              { number: '200+', label: 'Signature Dishes' }
-            ].map((stat, index) => (
-              <div key={index} className="text-center group">
-                <div className="text-3xl md:text-4xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-200">
-                  {stat.number}
-                </div>
-                <div className="text-gray-400 text-sm uppercase tracking-wide">
-                  {stat.label}
-                </div>
+            <div className="text-center group">
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-200">
+                15+
               </div>
-            ))}
+              <div className="text-gray-400 text-sm uppercase tracking-wide">
+                {t('hero.stats.years')}
+              </div>
+            </div>
+            <div className="text-center group">
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-200">
+                50K+
+              </div>
+              <div className="text-gray-400 text-sm uppercase tracking-wide">
+                {t('hero.stats.guests')}
+              </div>
+            </div>
+            <div className="text-center group">
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-200">
+                200+
+              </div>
+              <div className="text-gray-400 text-sm uppercase tracking-wide">
+                {t('hero.stats.dishes')}
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -8,17 +8,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { useShoppingContext } from '@/context/ShoppingContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Liked = () => {
   const { likedItems, removeFromLiked, addToCart } = useShoppingContext();
+  const { t } = useLanguage();
   
   // Remove from favorites
   const removeFromFavorites = (id: number) => {
     removeFromLiked(id);
     
     toast({
-      title: "Removed from favorites",
-      description: "The item has been removed from your favorites.",
+      title: t('toast.removed_from_favorites'),
+      description: t('toast.item_removed_favorites'),
     });
   };
   
@@ -27,8 +29,8 @@ const Liked = () => {
     addToCart(item);
     
     toast({
-      title: "Added to cart",
-      description: `${item.name} has been added to your cart.`,
+      title: t('toast.added_to_cart'),
+      description: t('toast.item_added_cart', { name: item.name }),
     });
   };
   
@@ -38,8 +40,8 @@ const Liked = () => {
     likedItems.forEach(item => removeFromLiked(item.id));
     
     toast({
-      title: "Favorites cleared",
-      description: "All items have been removed from your favorites.",
+      title: t('toast.favorites_cleared'),
+      description: t('toast.all_favorites_removed'),
     });
   };
 
@@ -52,10 +54,10 @@ const Liked = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-display font-bold gradient-text mb-4 animate-neon-glow">
-              Your Favorites
+              {t('liked.title')}
             </h1>
             <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto">
-              Items you've saved for later
+              {t('liked.subtitle')}
             </p>
           </div>
         </div>
@@ -67,7 +69,7 @@ const Liked = () => {
           <>
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-display font-bold">
-                Saved Items <span className="text-gray-400">({likedItems.length})</span>
+                {t('liked.saved_items')} <span className="text-gray-400">({likedItems.length})</span>
               </h2>
               <Button 
                 variant="outline" 
@@ -75,7 +77,7 @@ const Liked = () => {
                 onClick={clearFavorites}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Clear All
+                {t('liked.clear_all')}
               </Button>
             </div>
             
@@ -92,7 +94,7 @@ const Liked = () => {
                         <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-2">
                           <span className="text-slate-900 font-display font-bold text-2xl">{item.name[0]}</span>
                         </div>
-                        <p className="text-sm text-gray-400">Food Image Placeholder</p>
+                        <p className="text-sm text-gray-400">{t('liked.image_placeholder')}</p>
                       </div>
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
@@ -138,7 +140,7 @@ const Liked = () => {
                       onClick={() => handleAddToCart(item)}
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />
-                      Add to Cart
+                      {t('btn.add_to_cart')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -151,13 +153,13 @@ const Liked = () => {
             <div className="w-20 h-20 mx-auto mb-6 bg-white/5 rounded-full flex items-center justify-center">
               <Heart className="h-10 w-10 text-gray-400" />
             </div>
-            <h2 className="text-2xl font-display font-bold mb-3">No favorites yet</h2>
+            <h2 className="text-2xl font-display font-bold mb-3">{t('liked.empty_title')}</h2>
             <p className="text-gray-400 mb-6">
-              Items you favorite will appear here for easy access.
+              {t('liked.empty_description')}
             </p>
             <Button asChild className="bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 hover:from-cyan-500 hover:to-purple-600 font-semibold shadow-lg shadow-cyan-400/30 hover:shadow-cyan-400/50 transition-all duration-300 animate-shimmer">
               <Link to="/menu">
-                Explore Our Menu
+                {t('liked.explore_menu')}
               </Link>
             </Button>
           </div>

@@ -2,35 +2,38 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Testimonials = () => {
+  const { t } = useLanguage();
+
   const testimonials = [
     {
       id: 1,
       name: "Sarah Mitchell",
-      title: "Food Critic, NY Times",
-      content: "Everest Rest delivers an unparalleled dining experience. Each dish is a masterpiece that tells a story of culinary excellence and innovation.",
+      title: t('testimonials.critic_title'),
+      content: t('testimonials.testimonial_1'),
       rating: 5,
       image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3",
-      date: "2 weeks ago"
+      date: t('testimonials.date_1')
     },
     {
       id: 2,
       name: "Michael Rodriguez",
-      title: "Celebrity Chef",
-      content: "The attention to detail and flavor complexity at Everest Rest is extraordinary. This is fine dining at its absolute peak.",
+      title: t('testimonials.chef_title'),
+      content: t('testimonials.testimonial_2'),
       rating: 5,
       image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3",
-      date: "1 month ago"
+      date: t('testimonials.date_2')
     },
     {
       id: 3,
       name: "Emma Thompson",
-      title: "Luxury Travel Blogger",
-      content: "From the ambiance to the last bite, Everest Rest provides an unforgettable journey. Worth every star in its collection.",
+      title: t('testimonials.blogger_title'),
+      content: t('testimonials.testimonial_3'),
       rating: 5,
       image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3",
-      date: "3 weeks ago"
+      date: t('testimonials.date_3')
     }
   ];
 
@@ -40,10 +43,10 @@ const Testimonials = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="font-display text-4xl md:text-5xl font-bold gradient-text mb-6">
-            What Our Guests Say
+            {t('testimonials.title')}
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what culinary experts and food enthusiasts are saying
+            {t('testimonials.subtitle')}
           </p>
         </div>
 
@@ -103,19 +106,19 @@ const Testimonials = () => {
         <div className="text-center mt-16">
           <div className="inline-block glass-card p-8 max-w-2xl">
             <h3 className="font-display text-2xl font-bold gradient-text mb-4">
-              Join Our Community of Food Enthusiasts
+              {t('testimonials.cta_title')}
             </h3>
             <p className="text-gray-400 mb-6">
-              Experience the difference that has made Everest Rest a destination for culinary excellence
+              {t('testimonials.cta_subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <input 
                 type="email" 
-                placeholder="Enter your email"
+                placeholder={t('testimonials.email_placeholder')}
                 className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
               />
               <button className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 font-semibold rounded-lg hover:from-yellow-500 hover:to-amber-600 transition-all duration-200">
-                Get Updates
+                {t('testimonials.subscribe_btn')}
               </button>
             </div>
           </div>
