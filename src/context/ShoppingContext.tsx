@@ -24,10 +24,14 @@ interface ShoppingContextType {
   clearCart: () => void;
   addToLiked: (item: MenuItem) => void;
   removeFromLiked: (id: number) => void;
+  toggleLikedItem: (item: MenuItem) => void;
   isInCart: (id: number) => boolean;
   isLiked: (id: number) => boolean;
+  isItemLiked: (id: number) => boolean;
   cartCount: number;
   likedCount: number;
+  cartItemsCount: number;
+  likedItemsCount: number;
   cartTotal: number;
   setCartItems: (items: MenuItem[]) => void;
   setLikedItems: (items: MenuItem[]) => void;
@@ -43,10 +47,14 @@ const ShoppingContext = createContext<ShoppingContextType>({
   clearCart: () => {},
   addToLiked: () => {},
   removeFromLiked: () => {},
+  toggleLikedItem: () => {},
   isInCart: () => false,
   isLiked: () => false,
+  isItemLiked: () => false,
   cartCount: 0,
   likedCount: 0,
+  cartItemsCount: 0,
+  likedItemsCount: 0,
   cartTotal: 0,
   setCartItems: () => {},
   setLikedItems: () => {},
@@ -71,6 +79,8 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Calculate derived values
   const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
   const likedCount = likedItems.length;
+  const cartItemsCount = cartCount;
+  const likedItemsCount = likedCount;
   const cartTotal = cartItems.reduce(
     (total, item) => total + item.price * (item.quantity || 1),
     0
@@ -151,9 +161,19 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  const toggleLikedItem = (item: MenuItem) => {
+    const isCurrentlyLiked = likedItems.some((i) => i.id === item.id);
+    if (isCurrentlyLiked) {
+      removeFromLiked(item.id);
+    } else {
+      addToLiked(item);
+    }
+  };
+
   // Helper functions
   const isInCart = (id: number) => cartItems.some((item) => item.id === id);
   const isLiked = (id: number) => likedItems.some((item) => item.id === id);
+  const isItemLiked = (id: number) => isLiked(id);
 
   return (
     <ShoppingContext.Provider
@@ -166,10 +186,14 @@ export const ShoppingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         clearCart,
         addToLiked,
         removeFromLiked,
+        toggleLikedItem,
         isInCart,
         isLiked,
+        isItemLiked,
         cartCount,
         likedCount,
+        cartItemsCount,
+        likedItemsCount,
         cartTotal,
         setCartItems,
         setLikedItems,
