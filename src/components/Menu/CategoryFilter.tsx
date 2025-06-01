@@ -19,13 +19,13 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onCategoryChange,
 }) => {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
-      <div className="flex overflow-x-auto pb-4 space-x-3 hide-scrollbar">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8 w-full overflow-x-hidden">
+      <div className="flex overflow-x-auto pb-4 space-x-3 hide-scrollbar w-full">
         {categories.map((category) => (
           <Button
             key={category.id}
             variant={activeCategory === category.id ? "default" : "outline"}
-            className={`whitespace-nowrap text-sm px-4 py-3 transition-all duration-300 min-w-fit ${
+            className={`whitespace-nowrap text-sm px-4 py-3 transition-all duration-300 flex-shrink-0 ${
               activeCategory === category.id 
                 ? "neon-glow animate-pulse-neon" 
                 : "border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10"

@@ -26,8 +26,8 @@ const MenuGrid: React.FC<MenuGridProps> = ({
   onAddToLiked,
 }) => {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 w-full overflow-x-hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
         {items.map((item, index) => (
           <MenuItemCard
             key={item.id}

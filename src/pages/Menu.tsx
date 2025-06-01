@@ -22,12 +22,12 @@ const Menu = () => {
   } = useMenu();
 
   return (
-    <div className="min-h-screen bg-slate-900 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-900 overflow-x-hidden w-full">
       <Navbar />
       
       {/* Page Header */}
-      <div className="pt-20 pb-8 md:pt-32 md:pb-12 bg-slate-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="pt-20 pb-8 md:pt-32 md:pb-12 bg-slate-900 w-full overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="text-center">
             <h1 className="text-3xl md:text-5xl font-display font-bold gradient-text mb-4 animate-neon-glow">
               Ajoyib Menyu
@@ -40,26 +40,32 @@ const Menu = () => {
       </div>
 
       {/* Categories */}
-      <CategoryFilter
-        categories={categories}
-        activeCategory={activeCategory}
-        onCategoryChange={handleCategoryChange}
-      />
+      <div className="w-full overflow-x-hidden">
+        <CategoryFilter
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+        />
+      </div>
 
       {/* Menu Items Grid */}
-      <MenuGrid
-        items={currentItems}
-        isItemLiked={isItemLiked}
-        onAddToCart={handleAddToCart}
-        onAddToLiked={handleAddToLiked}
-      />
+      <div className="w-full overflow-x-hidden">
+        <MenuGrid
+          items={currentItems}
+          isItemLiked={isItemLiked}
+          onAddToCart={handleAddToCart}
+          onAddToLiked={handleAddToLiked}
+        />
+      </div>
 
       {/* Pagination */}
-      <MenuPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      <div className="w-full overflow-x-hidden">
+        <MenuPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
       
       <Footer />
     </div>
