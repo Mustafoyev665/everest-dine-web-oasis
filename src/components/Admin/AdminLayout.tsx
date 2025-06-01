@@ -9,7 +9,8 @@ import {
   Calendar, 
   MessageSquare, 
   LogOut,
-  Shield
+  Shield,
+  Menu as MenuIcon
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -31,6 +32,7 @@ const AdminLayout = () => {
     { path: '/admin/orders', icon: ShoppingBag, label: 'Buyurtmalar' },
     { path: '/admin/reservations', icon: Calendar, label: 'Bronlar' },
     { path: '/admin/messages', icon: MessageSquare, label: 'Xabarlar' },
+    { path: '/admin/menu', icon: MenuIcon, label: 'Menyu boshqaruvi' },
   ];
 
   return (

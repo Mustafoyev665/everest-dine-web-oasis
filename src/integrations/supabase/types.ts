@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean | null
+          password_hash: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          is_active?: boolean | null
+          password_hash: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean | null
+          password_hash?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           created_at: string | null
@@ -114,6 +147,57 @@ export type Database = {
           item_name?: string
           item_price?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      menu_items: {
+        Row: {
+          category: string
+          created_at: string
+          description_en: string | null
+          description_ru: string | null
+          description_uz: string | null
+          id: number
+          image: string | null
+          is_active: boolean | null
+          name_en: string
+          name_ru: string
+          name_uz: string
+          price: number
+          rating: number | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description_en?: string | null
+          description_ru?: string | null
+          description_uz?: string | null
+          id?: number
+          image?: string | null
+          is_active?: boolean | null
+          name_en: string
+          name_ru: string
+          name_uz: string
+          price: number
+          rating?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description_en?: string | null
+          description_ru?: string | null
+          description_uz?: string | null
+          id?: number
+          image?: string | null
+          is_active?: boolean | null
+          name_en?: string
+          name_ru?: string
+          name_uz?: string
+          price?: number
+          rating?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -228,6 +312,33 @@ export type Database = {
           status?: string | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      translations: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          language: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          language: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          language?: string
+          updated_at?: string
+          value?: string
         }
         Relationships: []
       }

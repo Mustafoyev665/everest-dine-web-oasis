@@ -3,6 +3,7 @@ import React from 'react';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface MenuItem {
   id: number;
@@ -29,6 +30,8 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
   onAddToCart,
   onAddToLiked,
 }) => {
+  const { t } = useLanguage();
+
   return (
     <Card 
       className="group glass-card hover:bg-white/10 transition-all duration-500 overflow-hidden animate-fade-in transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-400/20"
@@ -87,7 +90,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
           onClick={() => onAddToCart(item)}
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
-          Savatga qo'shish
+          {t('btn.add_to_cart')}
         </Button>
       </CardContent>
     </Card>

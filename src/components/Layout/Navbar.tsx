@@ -1,241 +1,167 @@
 
-import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Menu, X, User, Heart, ShoppingCart, LogOut } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, X, ShoppingCart, Heart, User, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useShoppingContext } from '@/context/ShoppingContext';
 import { useAuth } from '@/hooks/useAuth';
-import { useSupabaseSync } from '@/hooks/useSupabaseSync';
-import { Badge } from "@/components/ui/badge";
+import { useLanguage } from '@/context/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { cartCount, likedCount } = useShoppingContext();
-  const { user, signOut, isAdmin } = useAuth();
-  
-  // Initialize Supabase sync
-  useSupabaseSync();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cartItemsCount, likedItemsCount } = useShoppingContext();
+  const { user, signOut } = useAuth();
+  const { t } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    setIsMenuOpen(false);
   };
 
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Menu', path: '/menu' },
-    { name: 'Reservations', path: '/reservations' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' }
+  const navigation = [
+    { name: t('nav.home'), href: '/' },
+    { name: t('nav.menu'), href: '/menu' },
+    { name: t('nav.about'), href: '/about' },
+    { name: t('nav.contact'), href: '/contact' },
+    { name: t('nav.reservations'), href: '/reservations' },
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-      scrolled ? 'bg-slate-900/95 backdrop-blur-lg shadow-2xl' : 'bg-transparent'
-    }`}>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
-              <span className="text-slate-900 font-display font-bold text-xl">E</span>
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center">
+              <span className="text-slate-900 font-bold text-sm">E</span>
             </div>
-            <div className="hidden sm:block">
-              <span className="font-display text-2xl font-bold gradient-text">Everest Rest</span>
-              <p className="text-xs text-gray-400 -mt-1">Premium Dining Experience</p>
-            </div>
+            <span className="text-xl font-display font-bold gradient-text">
+              Everest Rest
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
+            {navigation.map((item) => (
               <Link
-                key={link.name}
-                to={link.path}
-                className={`relative text-sm font-medium transition-colors duration-200 hover:text-yellow-400 group ${
-                  location.pathname === link.path ? 'text-yellow-400' : 'text-gray-300'
-                }`}
+                key={item.name}
+                to={item.href}
+                className="text-gray-300 hover:text-white transition-colors duration-200 font-medium"
               >
-                {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                {item.name}
               </Link>
             ))}
-            {isAdmin && (
-              <Link
-                to="/admin/dashboard"
-                className="relative text-sm font-medium transition-colors duration-200 hover:text-yellow-400 group text-purple-400"
-              >
-                Admin
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/liked">
-              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
-                <Heart className="w-4 h-4" />
-                {likedCount > 0 && (
-                  <Badge 
-                    className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full"
-                  >
-                    {likedCount}
-                  </Badge>
+          {/* Right side items */}
+          <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
+            
+            {/* Cart */}
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
+                <ShoppingCart className="w-5 h-5" />
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-yellow-400 text-slate-900 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                    {cartItemsCount}
+                  </span>
                 )}
               </Button>
             </Link>
-            
-            <Link to="/cart">
-              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
-                <ShoppingCart className="w-4 h-4" />
-                {cartCount > 0 && (
-                  <Badge 
-                    className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full"
-                  >
-                    {cartCount}
-                  </Badge>
+
+            {/* Liked */}
+            <Link to="/liked" className="relative">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
+                <Heart className="w-5 h-5" />
+                {likedItemsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-pink-400 text-slate-900 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                    {likedItemsCount}
+                  </span>
                 )}
               </Button>
             </Link>
-            
+
+            {/* Auth */}
             {user ? (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-300">
-                  {user.user_metadata?.full_name || user.email}
-                </span>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-300 hover:text-yellow-400"
-                  onClick={handleSignOut}
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
+              <div className="hidden md:flex items-center space-x-2">
+                <span className="text-gray-300 text-sm">Salom!</span>
+                <Button onClick={handleSignOut} variant="ghost" size="sm" className="text-gray-300 hover:text-white">
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Chiqish
                 </Button>
               </div>
             ) : (
-              <Link to="/login">
-                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400">
-                  <User className="w-4 h-4 mr-2" />
-                  Sign In
-                </Button>
-              </Link>
+              <div className="hidden md:flex items-center space-x-2">
+                <Link to="/login">
+                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
+                    <User className="w-4 h-4 mr-1" />
+                    Kirish
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button size="sm" className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600">
+                    Ro'yxatdan o'tish
+                  </Button>
+                </Link>
+              </div>
             )}
-            
-            <Link to="/reservations">
-              <Button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold">
-                Reserve Table
-              </Button>
-            </Link>
-          </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+            {/* Mobile menu button */}
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-300"
+              className="md:hidden text-gray-300 hover:text-white"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-slate-900/98 backdrop-blur-lg border-t border-white/10 shadow-2xl">
-            <div className="px-4 py-6 space-y-4">
-              {navLinks.map((link) => (
+        {isMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-slate-800/95 rounded-lg mt-2 border border-white/10">
+              {navigation.map((item) => (
                 <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`block text-lg font-medium transition-colors duration-200 ${
-                    location.pathname === link.path ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'
-                  }`}
-                  onClick={() => setIsOpen(false)}
+                  key={item.name}
+                  to={item.href}
+                  className="block px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  {link.name}
+                  {item.name}
                 </Link>
               ))}
-              {isAdmin && (
-                <Link
-                  to="/admin/dashboard"
-                  className="block text-lg font-medium transition-colors duration-200 text-purple-400 hover:text-yellow-400"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Admin Dashboard
-                </Link>
-              )}
-              <div className="flex space-x-4 mt-4">
-                <Link to="/liked" onClick={() => setIsOpen(false)}>
-                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
-                    <Heart className="w-4 h-4" />
-                    {likedCount > 0 && (
-                      <Badge 
-                        className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full"
-                      >
-                        {likedCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </Link>
-                <Link to="/cart" onClick={() => setIsOpen(false)}>
-                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-yellow-400 relative">
-                    <ShoppingCart className="w-4 h-4" />
-                    {cartCount > 0 && (
-                      <Badge 
-                        className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full"
-                      >
-                        {cartCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </Link>
-              </div>
-              <div className="pt-4 space-y-3">
+              
+              <div className="border-t border-white/10 pt-3 mt-3">
                 {user ? (
-                  <div className="space-y-3">
-                    <div className="text-gray-300 text-center">
-                      {user.user_metadata?.full_name || user.email}
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      className="w-full" 
-                      onClick={() => {
-                        handleSignOut();
-                        setIsOpen(false);
-                      }}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </Button>
-                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="block w-full text-left px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    <LogOut className="w-4 h-4 mr-2 inline" />
+                    Chiqish
+                  </button>
                 ) : (
-                  <Button variant="outline" className="w-full" asChild>
-                    <Link to="/login" onClick={() => setIsOpen(false)}>
-                      <User className="w-4 h-4 mr-2" />
-                      Sign In
+                  <div className="space-y-2">
+                    <Link
+                      to="/login"
+                      className="block px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User className="w-4 h-4 mr-2 inline" />
+                      Kirish
                     </Link>
-                  </Button>
+                    <Link
+                      to="/signup"
+                      className="block px-3 py-2 text-yellow-400 hover:text-yellow-300 transition-colors duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Ro'yxatdan o'tish
+                    </Link>
+                  </div>
                 )}
-                <Button className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600" asChild>
-                  <Link to="/reservations" onClick={() => setIsOpen(false)}>
-                    Reserve Table
-                  </Link>
-                </Button>
               </div>
             </div>
           </div>

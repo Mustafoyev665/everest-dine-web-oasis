@@ -1,58 +1,67 @@
 
-import { useState } from 'react';
-import { toast } from '@/hooks/use-toast';
+import { useState, useEffect } from 'react';
 import { useShoppingContext } from '@/context/ShoppingContext';
-import { MenuItem, menuItems, categories } from '@/data/menuData';
+import { useMenuItems } from '@/hooks/useMenuItems';
+
+interface Category {
+  id: string;
+  name: string;
+}
 
 export const useMenu = () => {
-  const { addToCart, addToLiked, likedItems } = useShoppingContext();
+  const { menuItems, loading } = useMenuItems();
   const [activeCategory, setActiveCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
 
-  // Helper function to check if item is liked
-  const isItemLiked = (itemId: number) => {
-    return likedItems.some(item => item.id === itemId);
-  };
+  const { addToCart, toggleLikedItem, isItemLiked } = useShoppingContext();
 
-  // Filter items based on active category
+  // Get unique categories from menu items
+  const categories: Category[] = [
+    { id: 'all', name: 'Hammasi' },
+    ...Array.from(new Set(menuItems.map(item => item.category)))
+      .map(category => ({ id: category, name: category }))
+  ];
+
+  // Filter items by category
   const filteredItems = activeCategory === 'all' 
     ? menuItems 
     : menuItems.filter(item => item.category === activeCategory);
 
-  // Calculate pagination
+  // Pagination
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = filteredItems.slice(startIndex, endIndex);
+  const currentItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
 
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 400, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Handle category change
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
     setCurrentPage(1);
   };
 
-  // Handle add to cart
-  const handleAddToCart = (item: MenuItem) => {
-    addToCart(item);
-    toast({
-      title: "Added to cart",
-      description: `${item.name} has been added to your cart.`,
+  const handleAddToCart = (item: any) => {
+    addToCart({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      category: item.category,
+      description: item.description
     });
   };
 
-  // Handle add to liked
-  const handleAddToLiked = (item: MenuItem) => {
-    addToLiked(item);
-    toast({
-      title: "Added to favorites",
-      description: `${item.name} has been added to your favorites.`,
+  const handleAddToLiked = (item: any) => {
+    toggleLikedItem({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      category: item.category,
+      description: item.description
     });
   };
 
@@ -62,6 +71,7 @@ export const useMenu = () => {
     currentPage,
     totalPages,
     currentItems,
+    loading,
     isItemLiked,
     handlePageChange,
     handleCategoryChange,
