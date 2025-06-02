@@ -85,10 +85,10 @@ const Navbar = () => {
             {/* Auth */}
             {user ? (
               <div className="hidden md:flex items-center space-x-2">
-                <span className="text-gray-300 text-sm">Salom!</span>
+                <span className="text-gray-300 text-sm">{t('auth.hello')}</span>
                 <Button onClick={handleSignOut} variant="ghost" size="sm" className="text-gray-300 hover:text-white">
                   <LogOut className="w-4 h-4 mr-1" />
-                  Chiqish
+                  {t('auth.logout')}
                 </Button>
               </div>
             ) : (
@@ -96,12 +96,12 @@ const Navbar = () => {
                 <Link to="/login">
                   <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
                     <User className="w-4 h-4 mr-1" />
-                    Kirish
+                    {t('auth.login')}
                   </Button>
                 </Link>
                 <Link to="/signup">
                   <Button size="sm" className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600">
-                    Ro'yxatdan o'tish
+                    {t('auth.signup')}
                   </Button>
                 </Link>
               </div>
@@ -141,7 +141,7 @@ const Navbar = () => {
                     className="block w-full text-left px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200"
                   >
                     <LogOut className="w-4 h-4 mr-2 inline" />
-                    Chiqish
+                    {t('auth.logout')}
                   </button>
                 ) : (
                   <div className="space-y-2">
@@ -151,14 +151,14 @@ const Navbar = () => {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <User className="w-4 h-4 mr-2 inline" />
-                      Kirish
+                      {t('auth.login')}
                     </Link>
                     <Link
                       to="/signup"
                       className="block px-3 py-2 text-yellow-400 hover:text-yellow-300 transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Ro'yxatdan o'tish
+                      {t('auth.signup')}
                     </Link>
                   </div>
                 )}
