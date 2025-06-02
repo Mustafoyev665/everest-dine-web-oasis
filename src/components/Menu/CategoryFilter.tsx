@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/context/LanguageContext';
 
 interface Category {
   id: string;
@@ -19,8 +18,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   activeCategory,
   onCategoryChange,
 }) => {
-  const { t } = useLanguage();
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8 w-full overflow-x-hidden">
       <div className="flex overflow-x-auto pb-4 space-x-3 hide-scrollbar w-full">
@@ -33,7 +30,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           }`}
           onClick={() => onCategoryChange('all')}
         >
-          {t('categories.all')}
+          All Items
         </Button>
         {categories.filter(category => category.id !== 'all').map((category) => (
           <Button

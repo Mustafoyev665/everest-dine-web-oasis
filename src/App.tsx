@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ShoppingProvider } from "./context/ShoppingContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./hooks/useAuth";
-import { LanguageProvider } from "./context/LanguageContext";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
 import NotFound from "./pages/NotFound";
@@ -35,54 +34,52 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <LanguageProvider>
-          <ThemeProvider>
-            <ShoppingProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/menu" element={<Menu />} />
-                  <Route path="/reservations" element={<Reservations />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/liked" element={<Liked />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/admin/login" element={<AdminLogin />} />
-                  <Route 
-                    path="/admin" 
-                    element={
-                      <ProtectedRoute adminOnly>
-                        <AdminLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="dashboard" element={<AdminOverview />} />
-                    <Route path="orders" element={<AdminOrders />} />
-                    <Route path="reservations" element={<AdminReservations />} />
-                    <Route path="messages" element={<AdminMessages />} />
-                    <Route path="menu" element={<AdminMenuManagement />} />
-                  </Route>
-                  {/* Keep the old dashboard route for backward compatibility */}
-                  <Route 
-                    path="/admin/dashboard" 
-                    element={
-                      <ProtectedRoute adminOnly>
-                        <AdminDashboard />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </ShoppingProvider>
-          </ThemeProvider>
-        </LanguageProvider>
+        <ThemeProvider>
+          <ShoppingProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/menu" element={<Menu />} />
+                <Route path="/reservations" element={<Reservations />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/liked" element={<Liked />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route 
+                  path="/admin" 
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <AdminLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="dashboard" element={<AdminOverview />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="reservations" element={<AdminReservations />} />
+                  <Route path="messages" element={<AdminMessages />} />
+                  <Route path="menu" element={<AdminMenuManagement />} />
+                </Route>
+                {/* Keep the old dashboard route for backward compatibility */}
+                <Route 
+                  path="/admin/dashboard" 
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ShoppingProvider>
+        </ThemeProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

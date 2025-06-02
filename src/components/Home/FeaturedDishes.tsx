@@ -4,13 +4,11 @@ import { Star, Heart, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useShoppingContext } from '@/context/ShoppingContext';
-import { useLanguage } from '@/context/LanguageContext';
 import { toast } from '@/hooks/use-toast';
 import { menuItems } from '@/data/menuData';
 
 const FeaturedDishes = () => {
   const { addToCart, addToLiked, likedItems } = useShoppingContext();
-  const { t } = useLanguage();
 
   const isItemLiked = (itemId: number) => {
     return likedItems.some(item => item.id === itemId);
@@ -26,16 +24,16 @@ const FeaturedDishes = () => {
   const handleAddToCart = (item: any) => {
     addToCart(item);
     toast({
-      title: t('toast.added_to_cart'),
-      description: t('toast.item_added_cart', { name: item.name }),
+      title: "Added to cart",
+      description: `${item.name} has been added to your cart.`,
     });
   };
 
   const handleAddToLiked = (item: any) => {
     addToLiked(item);
     toast({
-      title: t('toast.added_to_favorites'),
-      description: t('toast.item_added_favorites', { name: item.name }),
+      title: "Added to favorites",
+      description: `${item.name} has been added to your favorites.`,
     });
   };
 
@@ -44,10 +42,10 @@ const FeaturedDishes = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-display font-bold gradient-text mb-4">
-            {t('featured.title')}
+            Featured Dishes
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            {t('featured.subtitle')}
+            Our chef's selection of exquisite flavors you can't miss
           </p>
         </div>
 
@@ -110,7 +108,7 @@ const FeaturedDishes = () => {
                   onClick={() => handleAddToCart(item)}
                 >
                   <ShoppingCart className="w-4 h-4 mr-2" />
-                  {t('btn.add_to_cart')}
+                  Add to Cart
                 </Button>
               </CardContent>
             </Card>

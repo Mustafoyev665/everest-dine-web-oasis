@@ -5,14 +5,11 @@ import { Menu, X, ShoppingCart, Heart, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useShoppingContext } from '@/context/ShoppingContext';
 import { useAuth } from '@/hooks/useAuth';
-import { useLanguage } from '@/context/LanguageContext';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cartItemsCount, likedItemsCount } = useShoppingContext();
   const { user, signOut } = useAuth();
-  const { t } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
@@ -20,11 +17,11 @@ const Navbar = () => {
   };
 
   const navigation = [
-    { name: t('nav.home'), href: '/' },
-    { name: t('nav.menu'), href: '/menu' },
-    { name: t('nav.about'), href: '/about' },
-    { name: t('nav.contact'), href: '/contact' },
-    { name: t('nav.reservations'), href: '/reservations' },
+    { name: 'Home', href: '/' },
+    { name: 'Menu', href: '/menu' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Reservations', href: '/reservations' },
   ];
 
   return (
@@ -56,8 +53,6 @@ const Navbar = () => {
 
           {/* Right side items */}
           <div className="flex items-center space-x-4">
-            <LanguageSwitcher />
-            
             {/* Cart */}
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
@@ -85,10 +80,10 @@ const Navbar = () => {
             {/* Auth */}
             {user ? (
               <div className="hidden md:flex items-center space-x-2">
-                <span className="text-gray-300 text-sm">{t('auth.hello')}</span>
+                <span className="text-gray-300 text-sm">Hello, {user.email}</span>
                 <Button onClick={handleSignOut} variant="ghost" size="sm" className="text-gray-300 hover:text-white">
                   <LogOut className="w-4 h-4 mr-1" />
-                  {t('auth.logout')}
+                  Logout
                 </Button>
               </div>
             ) : (
@@ -96,12 +91,12 @@ const Navbar = () => {
                 <Link to="/login">
                   <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
                     <User className="w-4 h-4 mr-1" />
-                    {t('auth.login')}
+                    Login
                   </Button>
                 </Link>
                 <Link to="/signup">
                   <Button size="sm" className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600">
-                    {t('auth.signup')}
+                    Sign Up
                   </Button>
                 </Link>
               </div>
@@ -141,7 +136,7 @@ const Navbar = () => {
                     className="block w-full text-left px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200"
                   >
                     <LogOut className="w-4 h-4 mr-2 inline" />
-                    {t('auth.logout')}
+                    Logout
                   </button>
                 ) : (
                   <div className="space-y-2">
@@ -151,14 +146,14 @@ const Navbar = () => {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <User className="w-4 h-4 mr-2 inline" />
-                      {t('auth.login')}
+                      Login
                     </Link>
                     <Link
                       to="/signup"
                       className="block px-3 py-2 text-yellow-400 hover:text-yellow-300 transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {t('auth.signup')}
+                      Sign Up
                     </Link>
                   </div>
                 )}

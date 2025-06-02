@@ -4,37 +4,34 @@ import Navbar from '@/components/Layout/Navbar';
 import Footer from '@/components/Layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '@/context/LanguageContext';
 
 const About = () => {
-  const { t } = useLanguage();
-
   // Restaurant history milestones
   const timeline = [
     {
       year: '2010',
-      title: t('about.timeline.beginning.title'),
-      description: t('about.timeline.beginning.description')
+      title: 'Humble Beginnings',
+      description: 'Everest Rest opened its doors with a vision to bring authentic Nepalese cuisine to the heart of the city.'
     },
     {
       year: '2013',
-      title: t('about.timeline.first_star.title'),
-      description: t('about.timeline.first_star.description')
+      title: 'First Michelin Star',
+      description: 'Recognition for our innovative fusion of traditional Nepalese flavors with modern culinary techniques.'
     },
     {
       year: '2016',
-      title: t('about.timeline.expansion.title'),
-      description: t('about.timeline.expansion.description')
+      title: 'Expansion',
+      description: 'Opened our second location and launched our signature chef\'s table experience.'
     },
     {
       year: '2019',
-      title: t('about.timeline.second_star.title'),
-      description: t('about.timeline.second_star.description')
+      title: 'Second Michelin Star',
+      description: 'Awarded our second Michelin star for exceptional cuisine and service excellence.'
     },
     {
       year: '2022',
-      title: t('about.timeline.sustainability.title'),
-      description: t('about.timeline.sustainability.description')
+      title: 'Sustainability Initiative',
+      description: 'Launched our farm-to-table program and achieved carbon-neutral operations.'
     },
   ];
 
@@ -47,10 +44,10 @@ const About = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-display font-bold gradient-text mb-4">
-              {t('about.title')}
+              About Our Story
             </h1>
             <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-400 max-w-3xl mx-auto">
-              {t('about.subtitle')}
+              A culinary journey that began with passion and continues with excellence
             </p>
           </div>
         </div>
@@ -61,15 +58,15 @@ const About = () => {
         {/* Introduction */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
           <div className="glass-card p-8 animate-fade-in-up">
-            <h2 className="text-3xl font-display font-bold mb-6 text-black dark:text-white">{t('about.experience.title')}</h2>
+            <h2 className="text-3xl font-display font-bold mb-6 text-black dark:text-white">Our Experience</h2>
             <p className="text-gray-800 dark:text-gray-300 leading-relaxed mb-6">
-              {t('about.experience.paragraph1')}
+              At Everest Rest, we believe that dining is more than just a meal – it's an experience that engages all your senses. Founded in 2010, our restaurant has been dedicated to creating unforgettable culinary memories.
             </p>
             <p className="text-gray-800 dark:text-gray-300 leading-relaxed mb-6">
-              {t('about.experience.paragraph2')}
+              Our master chefs combine traditional Nepalese cooking techniques with modern innovation, using only the finest locally-sourced ingredients to create dishes that tell a story.
             </p>
             <p className="text-gray-800 dark:text-gray-300 leading-relaxed">
-              {t('about.experience.paragraph3')}
+              Every plate that leaves our kitchen is a testament to our commitment to excellence, creativity, and the rich culinary heritage that inspires us every day.
             </p>
           </div>
           
@@ -79,8 +76,8 @@ const About = () => {
                 <div className="w-40 h-40 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-slate-900 font-display font-bold text-6xl">E</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">{t('about.chef.portrait')}</h3>
-                <p className="text-gray-700 dark:text-gray-400">{t('about.chef.name')}</p>
+                <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">Chef's Portrait</h3>
+                <p className="text-gray-700 dark:text-gray-400">Master Chef Rajesh Kumar</p>
               </div>
             </div>
           </div>
@@ -90,43 +87,43 @@ const About = () => {
         <div className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-display font-bold gradient-text mb-6">
-              {t('about.mission.title')}
+              Our Mission & Values
             </h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="glass-card p-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-              <h3 className="text-2xl font-display font-bold mb-4 text-yellow-400">{t('about.vision.title')}</h3>
+              <h3 className="text-2xl font-display font-bold mb-4 text-yellow-400">Vision</h3>
               <p className="text-gray-800 dark:text-gray-300 leading-relaxed">
-                {t('about.vision.content')}
+                To be the premier destination for authentic Nepalese cuisine, where tradition meets innovation in perfect harmony.
               </p>
             </div>
             
             <div className="glass-card p-8 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-              <h3 className="text-2xl font-display font-bold mb-4 text-yellow-400">{t('about.mission.subtitle')}</h3>
+              <h3 className="text-2xl font-display font-bold mb-4 text-yellow-400">Mission</h3>
               <p className="text-gray-800 dark:text-gray-300 leading-relaxed">
-                {t('about.mission.content')}
+                To create exceptional dining experiences through passionate cooking, warm hospitality, and unwavering commitment to quality.
               </p>
             </div>
             
             <div className="glass-card p-8 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-              <h3 className="text-2xl font-display font-bold mb-4 text-yellow-400">{t('about.values.title')}</h3>
+              <h3 className="text-2xl font-display font-bold mb-4 text-yellow-400">Values</h3>
               <ul className="text-gray-800 dark:text-gray-300 space-y-2">
                 <li className="flex items-start">
                   <span className="text-yellow-400 mr-2">•</span>
-                  {t('about.values.excellence')}
+                  Culinary Excellence
                 </li>
                 <li className="flex items-start">
                   <span className="text-yellow-400 mr-2">•</span>
-                  {t('about.values.sustainability')}
+                  Sustainability
                 </li>
                 <li className="flex items-start">
                   <span className="text-yellow-400 mr-2">•</span>
-                  {t('about.values.innovation')}
+                  Innovation
                 </li>
                 <li className="flex items-start">
                   <span className="text-yellow-400 mr-2">•</span>
-                  {t('about.values.hospitality')}
+                  Warm Hospitality
                 </li>
               </ul>
             </div>
@@ -137,7 +134,7 @@ const About = () => {
         <div className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-display font-bold gradient-text mb-6">
-              {t('about.journey.title')}
+              Our Journey
             </h2>
           </div>
           
@@ -177,12 +174,12 @@ const About = () => {
         
         {/* CTA */}
         <div className="glass-card p-12 text-center animate-fade-in-up">
-          <h2 className="text-3xl font-display font-bold mb-6 text-black dark:text-white">{t('about.cta.title')}</h2>
+          <h2 className="text-3xl font-display font-bold mb-6 text-black dark:text-white">Ready to Experience Excellence?</h2>
           <p className="text-gray-800 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-            {t('about.cta.description')}
+            Join us for an unforgettable dining experience where every dish tells a story and every meal becomes a cherished memory.
           </p>
           <Button asChild className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold px-8 py-6 h-auto text-lg">
-            <Link to="/reservations">{t('about.cta.button')}</Link>
+            <Link to="/reservations">Make a Reservation</Link>
           </Button>
         </div>
       </div>
