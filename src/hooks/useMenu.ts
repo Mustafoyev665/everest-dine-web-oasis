@@ -12,13 +12,13 @@ export const useMenu = () => {
   const { menuItems, loading } = useMenuItems();
   const [activeCategory, setActiveCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 30; // Changed to 30 items per page
 
   const { addToCart, toggleLikedItem, isItemLiked } = useShoppingContext();
 
   // Get unique categories from menu items
   const categories: Category[] = [
-    { id: 'all', name: 'Hammasi' },
+    { id: 'all', name: 'All Items' },
     ...Array.from(new Set(menuItems.map(item => item.category)))
       .map(category => ({ id: category, name: category }))
   ];
