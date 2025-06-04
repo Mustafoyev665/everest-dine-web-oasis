@@ -22,10 +22,21 @@ const Menu = () => {
     handleAddToLiked,
   } = useMenu();
 
+  console.log('Menu page render:', {
+    categoriesCount: categories.length,
+    currentItemsCount: currentItems.length,
+    loading,
+    totalPages,
+    activeCategory
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+          <p className="text-white">Menyu yuklanmoqda...</p>
+        </div>
       </div>
     );
   }
@@ -44,6 +55,9 @@ const Menu = () => {
             <p className="text-lg md:text-2xl text-gray-400 max-w-3xl mx-auto">
               Discover our exquisite collection of dishes crafted with passion and precision
             </p>
+            <div className="mt-4 text-cyan-400">
+              <p>{categories.length - 1} kategoriya • {currentItems.length} mahsulot</p>
+            </div>
           </div>
         </div>
       </div>
@@ -59,22 +73,32 @@ const Menu = () => {
 
       {/* Menu Items Grid */}
       <div className="w-full overflow-x-hidden">
-        <MenuGrid
-          items={currentItems}
-          isItemLiked={isItemLiked}
-          onAddToCart={handleAddToCart}
-          onAddToLiked={handleAddToLiked}
-        />
+        {currentItems.length > 0 ? (
+          <MenuGrid
+            items={currentItems}
+            isItemLiked={isItemLiked}
+            onAddToCart={handleAddToCart}
+            onAddToLiked={handleAddToLiked}
+          />
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 w-full overflow-x-hidden">
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">Bu kategoriyada mahsulotlar topilmadi</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Pagination */}
-      <div className="w-full overflow-x-hidden">
-        <MenuPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
+      {totalPages > 1 && (
+        <div className="w-full overflow-x-hidden">
+          <MenuPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
       
       <Footer />
     </div>
