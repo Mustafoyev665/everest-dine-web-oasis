@@ -41,11 +41,15 @@ const Login = () => {
   
   const onSubmit = async (data: FormData) => {
     try {
+      console.log('Form submitted with email:', data.email);
       await signIn(data.email, data.password);
       // If login successful, user will be redirected by useEffect
     } catch (error) {
       // Error handling is done in the signIn function
       console.error('Login error:', error);
+      form.setError('root', {
+        message: 'Login failed. Please check your credentials.'
+      });
     }
   };
   
@@ -116,6 +120,12 @@ const Login = () => {
                     </FormItem>
                   )}
                 />
+
+                {form.formState.errors.root && (
+                  <div className="text-red-500 text-sm text-center">
+                    {form.formState.errors.root.message}
+                  </div>
+                )}
                 
                 <Button 
                   type="submit" 
@@ -138,6 +148,12 @@ const Login = () => {
                 Don't have an account?{' '}
                 <Link to="/signup" className="text-yellow-400 hover:text-yellow-300 font-medium">
                   Create account
+                </Link>
+              </p>
+              <p className="text-sm text-gray-400 mt-2">
+                Admin panel:{' '}
+                <Link to="/admin/login" className="text-yellow-400 hover:text-yellow-300 font-medium">
+                  Admin Login
                 </Link>
               </p>
             </div>

@@ -41,12 +41,16 @@ const AdminLogin = () => {
   
   const onSubmit = async (data: FormData) => {
     try {
+      console.log('Admin login attempt:', data.email);
       await signIn(data.email, data.password);
       if (data.email === 'mustafoyev7788@gmail.com') {
         navigate('/admin/dashboard');
       }
     } catch (error) {
       console.error('Admin login error:', error);
+      form.setError('root', {
+        message: 'Admin login failed. Please check your credentials or try again.'
+      });
     }
   };
   
@@ -158,6 +162,9 @@ const AdminLogin = () => {
               <p className="mb-2">Demo ma'lumotlar:</p>
               <p>Email: mustafoyev7788@gmail.com</p>
               <p>Parol: 12345678!@WEB</p>
+              <p className="mt-2 text-yellow-400">
+                Agar kirish ishlamasa, avval admin hisobini yarating yoki parolni yangilang
+              </p>
             </div>
           </div>
         </div>

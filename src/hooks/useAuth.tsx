@@ -115,71 +115,83 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
+      console.log('Attempting login for:', email);
       
       // Admin uchun maxsus tekshirish
       if (email === 'mustafoyev7788@gmail.com') {
-        // Admin uchun to'g'ridan-to'g'ri kirish
-        const { data, error } = await supabase.auth.signInWithPassword({
+        console.log('Admin login attempt');
+        
+        // Avval admin foydalanuvchini yaratishga harakat qilamiz
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              full_name: 'Admin User',
+            }
+          }
         });
 
-        if (error) {
-          // Agar admin foydalanuvchi mavjud bo'lmasa, uni yaratamiz
-          if (error.message.includes('Invalid login credentials') || 
-              error.message.includes('Email not confirmed')) {
-            
-            // Admin foydalanuvchini yaratishga harakat qilamiz
-            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-              email,
-              password,
-              options: {
-                data: {
-                  full_name: 'Admin User',
-                }
-              }
-            });
+        // Agar foydalanuvchi allaqachon mavjud bo'lsa, kirish
+        if (signUpError && signUpError.message.includes('User already registered')) {
+          console.log('Admin user exists, trying to sign in');
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
 
-            if (signUpError) {
-              throw signUpError;
-            }
-
-            if (signUpData.user) {
-              // Foydalanuvchi yaratildi, endi kirish
-              const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-                email,
-                password,
+          if (error) {
+            // Agar parol noto'g'ri bo'lsa, foydalanuvchini yangilaymiz
+            if (error.message.includes('Invalid login credentials')) {
+              console.log('Updating admin password');
+              
+              // Admin parolini yangilash uchun reset password qilamiz
+              const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/admin/login`
               });
-
-              if (signInError) {
-                throw signInError;
+              
+              if (!resetError) {
+                toast({
+                  title: "Parol yangilash",
+                  description: "Emailingizga parolni yangilash havolasi yuborildi.",
+                  variant: "destructive",
+                });
+                return;
               }
-
-              toast({
-                title: "Admin panel",
-                description: "Admin sifatida tizimga muvaffaqiyatli kirdingiz.",
-              });
-              return;
             }
-          } else {
             throw error;
           }
-        } else {
+
+          if (data.user) {
+            toast({
+              title: "Admin panel",
+              description: "Admin sifatida tizimga muvaffaqiyatli kirdingiz.",
+            });
+            return;
+          }
+        } else if (!signUpError && signUpData.user) {
+          // Yangi admin foydalanuvchi yaratildi
+          console.log('New admin user created');
           toast({
             title: "Admin panel",
-            description: "Admin sifatida tizimga muvaffaqiyatli kirdingiz.",
+            description: "Admin hisobi yaratildi va tizimga kirdingiz.",
           });
           return;
+        } else if (signUpError) {
+          console.error('Admin signup error:', signUpError);
+          throw signUpError;
         }
       }
 
       // Oddiy foydalanuvchilar uchun
+      console.log('Regular user login attempt');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        console.error('Login error:', error);
         if (error.message.includes('Email not confirmed')) {
           toast({
             title: "Email tasdiqlanmagan",
@@ -189,7 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else if (error.message.includes('Invalid login credentials')) {
           toast({
             title: "Noto'g'ri ma'lumotlar",
-            description: "Email yoki parolni tekshiring.",
+            description: "Email yoki parolni tekshiring. Agar hisob mavjud bo'lmasa, avval ro'yxatdan o'ting.",
             variant: "destructive",
           });
         } else {
@@ -203,6 +215,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user && data.session) {
+        console.log('Login successful');
         toast({
           title: "Muvaffaqiyatli kirildi!",
           description: "Everest Rest ga xush kelibsiz.",
