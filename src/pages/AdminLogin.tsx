@@ -11,8 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useAuth } from '@/hooks/useAuth';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
+  email: z.string().email({ message: 'To\'g\'ri email manzilini kiriting.' }),
+  password: z.string().min(1, { message: 'Parol kiritish majburiy.' }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -20,13 +20,13 @@ type FormData = z.infer<typeof formSchema>;
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { signIn, user, isAdmin } = useAuth();
+  const { signIn, user, isAdmin, loading } = useAuth();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'mustafoyev7788@gmail.com',
+      password: '12345678!@WEB',
     },
   });
 
@@ -41,23 +41,26 @@ const AdminLogin = () => {
   
   const onSubmit = async (data: FormData) => {
     try {
-      if (data.email !== 'mustafoyev7788@gmail.com' || data.password !== '12345678!@WEB') {
-        form.setError('root', {
-          message: 'Invalid admin credentials'
-        });
-        return;
-      }
-
       await signIn(data.email, data.password);
-      navigate('/admin/dashboard');
+      if (data.email === 'mustafoyev7788@gmail.com') {
+        navigate('/admin/dashboard');
+      }
     } catch (error) {
-      // Error handling is done in the signIn function
+      console.error('Admin login error:', error);
     }
   };
   
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
@@ -70,7 +73,7 @@ const AdminLogin = () => {
             Admin Panel
           </h1>
           <p className="text-gray-400">
-            Sign in to access order management
+            Buyurtmalarni boshqarish uchun tizimga kiring
           </p>
         </div>
         
@@ -101,7 +104,7 @@ const AdminLogin = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-300">Password</FormLabel>
+                    <FormLabel className="text-gray-300">Parol</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input 
@@ -143,12 +146,20 @@ const AdminLogin = () => {
                   <div className="h-5 w-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
                 ) : (
                   <>
-                    <LogIn className="mr-2 h-4 w-4" /> Sign In
+                    <LogIn className="mr-2 h-4 w-4" /> Kirish
                   </>
                 )}
               </Button>
             </form>
           </Form>
+
+          <div className="mt-6 pt-6 border-t border-white/10">
+            <div className="text-center text-sm text-gray-400">
+              <p className="mb-2">Demo ma'lumotlar:</p>
+              <p>Email: mustafoyev7788@gmail.com</p>
+              <p>Parol: 12345678!@WEB</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

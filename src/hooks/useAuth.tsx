@@ -64,11 +64,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      // For development, we'll use signUp with email confirmation disabled
+      const redirectUrl = `${window.location.origin}/`;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName,
           }
@@ -82,8 +84,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Check if user was created and confirmed automatically
       if (data.user && data.session) {
         toast({
-          title: "Account created successfully!",
-          description: "You are now logged in.",
+          title: "Hisob yaratildi!",
+          description: "Siz muvaffaqiyatli tizimga kirdingiz.",
         });
         return;
       }
@@ -91,8 +93,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // If email confirmation is enabled
       if (data.user && !data.session) {
         toast({
-          title: "Account created!",
-          description: "Please check your email to confirm your account.",
+          title: "Hisob yaratildi!",
+          description: "Hisobingizni tasdiqlash uchun emailingizni tekshiring.",
         });
         return;
       }
@@ -100,8 +102,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({
-        title: "Sign up failed",
-        description: error.message || "An error occurred during signup",
+        title: "Ro'yxatdan o'tishda xatolik",
+        description: error.message || "Ro'yxatdan o'tishda xatolik yuz berdi",
         variant: "destructive",
       });
       throw error;
@@ -114,28 +116,85 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
+      // Admin uchun maxsus tekshirish
+      if (email === 'mustafoyev7788@gmail.com') {
+        // Admin uchun to'g'ridan-to'g'ri kirish
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          // Agar admin foydalanuvchi mavjud bo'lmasa, uni yaratamiz
+          if (error.message.includes('Invalid login credentials') || 
+              error.message.includes('Email not confirmed')) {
+            
+            // Admin foydalanuvchini yaratishga harakat qilamiz
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+              email,
+              password,
+              options: {
+                data: {
+                  full_name: 'Admin User',
+                }
+              }
+            });
+
+            if (signUpError) {
+              throw signUpError;
+            }
+
+            if (signUpData.user) {
+              // Foydalanuvchi yaratildi, endi kirish
+              const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+              });
+
+              if (signInError) {
+                throw signInError;
+              }
+
+              toast({
+                title: "Admin panel",
+                description: "Admin sifatida tizimga muvaffaqiyatli kirdingiz.",
+              });
+              return;
+            }
+          } else {
+            throw error;
+          }
+        } else {
+          toast({
+            title: "Admin panel",
+            description: "Admin sifatida tizimga muvaffaqiyatli kirdingiz.",
+          });
+          return;
+        }
+      }
+
+      // Oddiy foydalanuvchilar uchun
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        // Handle specific error cases
         if (error.message.includes('Email not confirmed')) {
           toast({
-            title: "Email not confirmed",
-            description: "Please check your email and click the confirmation link before signing in.",
+            title: "Email tasdiqlanmagan",
+            description: "Tizimga kirishdan oldin emailingizni tasdiqlang.",
             variant: "destructive",
           });
         } else if (error.message.includes('Invalid login credentials')) {
           toast({
-            title: "Invalid credentials",
-            description: "Please check your email and password.",
+            title: "Noto'g'ri ma'lumotlar",
+            description: "Email yoki parolni tekshiring.",
             variant: "destructive",
           });
         } else {
           toast({
-            title: "Sign in failed",
+            title: "Tizimga kirishda xatolik",
             description: error.message,
             variant: "destructive",
           });
@@ -145,8 +204,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user && data.session) {
         toast({
-          title: "Signed in successfully!",
-          description: "Welcome back to Everest Rest.",
+          title: "Muvaffaqiyatli kirildi!",
+          description: "Everest Rest ga xush kelibsiz.",
         });
       }
 
@@ -167,13 +226,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       toast({
-        title: "Signed out successfully",
-        description: "You have been logged out.",
+        title: "Tizimdan chiqildi",
+        description: "Siz muvaffaqiyatli tizimdan chiqdingiz.",
       });
     } catch (error: any) {
       console.error('Signout error:', error);
       toast({
-        title: "Sign out failed",
+        title: "Tizimdan chiqishda xatolik",
         description: error.message,
         variant: "destructive",
       });

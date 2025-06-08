@@ -2,6 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import BusinessStats from '@/components/Business/BusinessStats';
+import RevenueChart from '@/components/Business/RevenueChart';
+import PopularDishes from '@/components/Business/PopularDishes';
+import CustomerFeedback from '@/components/Business/CustomerFeedback';
 import { 
   ShoppingBag, 
   Calendar, 
@@ -120,7 +124,11 @@ const AdminOverview = () => {
         <p className="text-gray-400">Everest Rest boshqaruv paneli</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Business Statistics */}
+      <BusinessStats />
+
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {statCards.map((card, index) => (
           <Card key={index} className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -136,6 +144,16 @@ const AdminOverview = () => {
         ))}
       </div>
 
+      {/* Charts and Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RevenueChart />
+        <PopularDishes />
+      </div>
+
+      {/* Customer Feedback */}
+      <CustomerFeedback />
+
+      {/* Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass-card">
           <CardHeader>
@@ -155,25 +173,38 @@ const AdminOverview = () => {
                 <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                 <span className="text-gray-300">Yangi xabar keldi</span>
               </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span className="text-gray-300">Menyu yangilandi</span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="text-white">Tezkor harakatlar</CardTitle>
+            <CardTitle className="text-white">Biznes ko'rsatkichlari</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <p className="text-gray-300 text-sm">
-                • {stats.pendingOrders} ta buyurtma kutilmoqda
-              </p>
-              <p className="text-gray-300 text-sm">
-                • {stats.unreadMessages} ta yangi xabar
-              </p>
-              <p className="text-gray-300 text-sm">
-                • Bugungi daromad: ${(stats.totalRevenue * 0.1).toFixed(2)}
-              </p>
+              <div className="flex justify-between">
+                <span className="text-gray-300">Bugungi daromad:</span>
+                <span className="text-yellow-400 font-bold">
+                  ${(stats.totalRevenue * 0.15).toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-300">O'rtacha buyurtma:</span>
+                <span className="text-green-400 font-bold">$18.50</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-300">Mijozlar sonining o'sishi:</span>
+                <span className="text-blue-400 font-bold">+12%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-300">O'rtacha reyting:</span>
+                <span className="text-purple-400 font-bold">4.8/5</span>
+              </div>
             </div>
           </CardContent>
         </Card>
