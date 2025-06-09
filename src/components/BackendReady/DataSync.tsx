@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useBackendAPI } from '@/hooks/useBackendAPI';
 import { useShoppingContext } from '@/context/ShoppingContext';
 import { Button } from '@/components/ui/button';
-import { Sync, Database, Check } from 'lucide-react';
+import { RefreshCw, Database, Check } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 // Backend bilan malumot sinxronizatsiyasi uchun komponent
@@ -85,7 +85,7 @@ const DataSync: React.FC = () => {
         className="w-full"
         variant="outline"
       >
-        <Sync className={`mr-2 h-4 w-4 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
+        <RefreshCw className={`mr-2 h-4 w-4 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
         Backend bilan sinxronlash
       </Button>
       
