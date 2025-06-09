@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, ShoppingCart, Heart, User, LogOut } from 'lucide-react';
@@ -9,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cartItemsCount, likedItemsCount } = useShoppingContext();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
@@ -25,34 +24,31 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-white/10">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center">
-              <span className="text-slate-900 font-bold text-sm">E</span>
-            </div>
-            <span className="text-xl font-display font-bold gradient-text">
-              Everest Rest
-            </span>
-          </Link>
+        <div className="flex justify-between h-20">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center">
+                <span className="text-slate-900 font-bold text-xl">E</span>
+              </div>
+              <span className="text-xl font-display font-bold gradient-text">Everest Rest</span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="relative text-gray-300 hover:text-white transition-colors duration-200 font-medium group"
-              >
-                {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            ))}
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/menu" className="nav-link">Menu</Link>
+            <Link to="/about" className="nav-link">About</Link>
+            <Link to="/reservations" className="nav-link">Reservations</Link>
+            <Link to="/contact" className="nav-link">Contact</Link>
+            {isAdmin && (
+              <Link to="/backend-ready" className="nav-link text-green-400">Backend Ready</Link>
+            )}
           </div>
 
-          {/* Right side items */}
+          {/* User Actions */}
           <div className="flex items-center space-x-4">
             {/* Cart */}
             <Link to="/cart" className="relative">

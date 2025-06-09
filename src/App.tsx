@@ -26,6 +26,7 @@ import AdminReservations from "./pages/Admin/AdminReservations";
 import AdminMessages from "./pages/Admin/AdminMessages";
 import AdminMenuManagement from "./pages/Admin/AdminMenuManagement";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import BackendReady from "./pages/BackendReady";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
                 <Route path="/liked" element={<Liked />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/backend-ready" element={<BackendReady />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route 
                   path="/admin" 
@@ -66,7 +68,6 @@ const App = () => (
                   <Route path="messages" element={<AdminMessages />} />
                   <Route path="menu" element={<AdminMenuManagement />} />
                 </Route>
-                {/* Keep the old dashboard route for backward compatibility */}
                 <Route 
                   path="/admin/dashboard" 
                   element={

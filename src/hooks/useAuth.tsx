@@ -34,7 +34,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let mounted = true;
 
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
@@ -43,10 +42,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+
+        // Ro'yxatdan o'tganda avtomatik welcome toast ko'rsatish
+        if (event === 'SIGNED_UP' && session?.user) {
+          toast({
+            title: "Hisob muvaffaqiyatli yaratildi!",
+            description: "Everest Rest ga xush kelibsiz. Endi saytdan to'liq foydalanishingiz mumkin.",
+          });
+        }
+
+        if (event === 'SIGNED_IN' && session?.user) {
+          toast({
+            title: "Tizimga muvaffaqiyatli kirdingiz!",
+            description: "Xush kelibsiz!",
+          });
+        }
       }
     );
 
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
       setSession(session);
@@ -64,13 +77,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      const redirectUrl = `${window.location.origin}/`;
-      
+      // Admin email uchun maxsus ishlov
+      if (email === 'mustafoyev7788@gmail.com') {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            }
+          }
+        });
+
+        if (error) {
+          // Agar admin allaqachon mavjud bo'lsa, login qilish
+          if (error.message.includes('User already registered')) {
+            await signIn(email, password);
+            return;
+          }
+          throw error;
+        }
+
+        if (data.user) {
+          toast({
+            title: "Admin hisob yaratildi!",
+            description: "Admin sifatida tizimga kirdingiz.",
+          });
+        }
+        return;
+      }
+
+      // Oddiy foydalanuvchilar uchun
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName,
           }
@@ -81,22 +122,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
 
-      // Check if user was created and confirmed automatically
-      if (data.user && data.session) {
-        toast({
-          title: "Hisob yaratildi!",
-          description: "Siz muvaffaqiyatli tizimga kirdingiz.",
-        });
-        return;
-      }
-
-      // If email confirmation is enabled
+      // Avtomatik login - email tasdiqlash talab qilinmaydi
       if (data.user && !data.session) {
-        toast({
-          title: "Hisob yaratildi!",
-          description: "Hisobingizni tasdiqlash uchun emailingizni tekshiring.",
+        // Foydalanuvchi yaratildi lekin session yo'q, avtomatik login qilish
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
-        return;
+
+        if (signInError) {
+          console.error('Auto login error:', signInError);
+          toast({
+            title: "Hisob yaratildi!",
+            description: "Iltimos login sahifasiga o'ting va tizimga kiring.",
+          });
+        }
       }
 
     } catch (error: any) {
@@ -115,76 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
-      console.log('Attempting login for:', email);
       
-      // Admin uchun maxsus tekshirish
-      if (email === 'mustafoyev7788@gmail.com') {
-        console.log('Admin login attempt');
-        
-        // Avval admin foydalanuvchini yaratishga harakat qilamiz
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: 'Admin User',
-            }
-          }
-        });
-
-        // Agar foydalanuvchi allaqachon mavjud bo'lsa, kirish
-        if (signUpError && signUpError.message.includes('User already registered')) {
-          console.log('Admin user exists, trying to sign in');
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-
-          if (error) {
-            // Agar parol noto'g'ri bo'lsa, foydalanuvchini yangilaymiz
-            if (error.message.includes('Invalid login credentials')) {
-              console.log('Updating admin password');
-              
-              // Admin parolini yangilash uchun reset password qilamiz
-              const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/admin/login`
-              });
-              
-              if (!resetError) {
-                toast({
-                  title: "Parol yangilash",
-                  description: "Emailingizga parolni yangilash havolasi yuborildi.",
-                  variant: "destructive",
-                });
-                return;
-              }
-            }
-            throw error;
-          }
-
-          if (data.user) {
-            toast({
-              title: "Admin panel",
-              description: "Admin sifatida tizimga muvaffaqiyatli kirdingiz.",
-            });
-            return;
-          }
-        } else if (!signUpError && signUpData.user) {
-          // Yangi admin foydalanuvchi yaratildi
-          console.log('New admin user created');
-          toast({
-            title: "Admin panel",
-            description: "Admin hisobi yaratildi va tizimga kirdingiz.",
-          });
-          return;
-        } else if (signUpError) {
-          console.error('Admin signup error:', signUpError);
-          throw signUpError;
-        }
-      }
-
-      // Oddiy foydalanuvchilar uchun
-      console.log('Regular user login attempt');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -192,16 +163,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.error('Login error:', error);
-        if (error.message.includes('Email not confirmed')) {
-          toast({
-            title: "Email tasdiqlanmagan",
-            description: "Tizimga kirishdan oldin emailingizni tasdiqlang.",
-            variant: "destructive",
-          });
-        } else if (error.message.includes('Invalid login credentials')) {
+        if (error.message.includes('Invalid login credentials')) {
           toast({
             title: "Noto'g'ri ma'lumotlar",
-            description: "Email yoki parolni tekshiring. Agar hisob mavjud bo'lmasa, avval ro'yxatdan o'ting.",
+            description: "Email yoki parolni tekshiring.",
             variant: "destructive",
           });
         } else {
@@ -212,14 +177,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
         }
         throw error;
-      }
-
-      if (data.user && data.session) {
-        console.log('Login successful');
-        toast({
-          title: "Muvaffaqiyatli kirildi!",
-          description: "Everest Rest ga xush kelibsiz.",
-        });
       }
 
     } catch (error: any) {
