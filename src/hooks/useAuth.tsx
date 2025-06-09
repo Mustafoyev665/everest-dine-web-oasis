@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -43,14 +44,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
 
         // Ro'yxatdan o'tganda avtomatik welcome toast ko'rsatish
-        if (event === 'SIGNED_UP' && session?.user) {
+        if (event === 'SIGNED_UP' as AuthChangeEvent && session?.user) {
           toast({
             title: "Hisob muvaffaqiyatli yaratildi!",
             description: "Everest Rest ga xush kelibsiz. Endi saytdan to'liq foydalanishingiz mumkin.",
           });
         }
 
-        if (event === 'SIGNED_IN' && session?.user) {
+        if (event === 'SIGNED_IN' as AuthChangeEvent && session?.user) {
           toast({
             title: "Tizimga muvaffaqiyatli kirdingiz!",
             description: "Xush kelibsiz!",
