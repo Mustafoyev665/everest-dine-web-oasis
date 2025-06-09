@@ -7,14 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Sync, Database, Check } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
-// Backend bilan ma'lumot sinxronizatsiyasi uchun komponent
+// Backend bilan malumot sinxronizatsiyasi uchun komponent
 const DataSync: React.FC = () => {
   const { user } = useAuth();
   const { cartItems, likedItems } = useShoppingContext();
   const { getUserData, formatOrderForBackend } = useBackendAPI();
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
 
-  // Backend bilan sync qilish uchun tayyorlangan ma'lumotlar
+  // Backend bilan sync qilish uchun tayyorlangan malumotlar
   const getDataForBackend = () => {
     return {
       user: getUserData(),
@@ -24,7 +24,7 @@ const DataSync: React.FC = () => {
     };
   };
 
-  // Backend API ga yuborish uchun ma'lumotlarni tayyorlash
+  // Backend API ga yuborish uchun malumotlarni tayyorlash
   const syncWithBackend = async () => {
     if (!user) return;
 
@@ -33,25 +33,25 @@ const DataSync: React.FC = () => {
     try {
       const data = getDataForBackend();
       
-      // Bu yerda backend API ga so'rov yuboriladi
-      console.log('Backend uchun tayyorlangan ma'lumotlar:', data);
+      // Bu yerda backend API ga sorov yuboriladi
+      console.log('Backend uchun tayyorlangan malumotlar:', data);
       
       // Backend endpoints:
-      // POST /api/users/sync - foydalanuvchi ma'lumotlarini sinxronlash
+      // POST /api/users/sync - foydalanuvchi malumotlarini sinxronlash
       // POST /api/cart/sync - savatni sinxronlash
       // POST /api/wishlist/sync - sevimlilarni sinxronlash
       
       setSyncStatus('success');
       toast({
-        title: "Ma'lumotlar sinxronlashtirildi",
-        description: "Barcha ma'lumotlar backend bilan muvaffaqiyatli sinxronlashtirildi.",
+        title: "Malumotlar sinxronlashtirildi",
+        description: "Barcha malumotlar backend bilan muvaffaqiyatli sinxronlashtirildi.",
       });
       
     } catch (error) {
       setSyncStatus('error');
       toast({
         title: "Sinxronlashda xatolik",
-        description: "Backend bilan bog'lanishda muammo yuz berdi.",
+        description: "Backend bilan boglanishda muammo yuz berdi.",
         variant: "destructive",
       });
     }
@@ -76,7 +76,7 @@ const DataSync: React.FC = () => {
       </div>
       
       <p className="text-gray-400 text-sm mb-4">
-        Ma'lumotlarni backend (Node.js + MongoDB) bilan sinxronlash
+        Malumotlarni backend (Node.js + MongoDB) bilan sinxronlash
       </p>
       
       <Button 
