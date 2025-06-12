@@ -1,164 +1,139 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
-import Navbar from '@/components/Layout/Navbar';
-import Footer from '@/components/Layout/Footer';
+import React, { useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-
-const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
-});
-
-type FormData = z.infer<typeof formSchema>;
+import Navbar from '@/components/Layout/Navbar';
+import Footer from '@/components/Layout/Footer';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
-  const { signIn, user, loading } = useAuth();
-  
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
 
   // Redirect if already logged in
-  useEffect(() => {
-    if (user && !loading) {
-      navigate('/');
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      return;
     }
-  }, [user, loading, navigate]);
-  
-  const onSubmit = async (data: FormData) => {
+
+    setIsLoading(true);
     try {
-      console.log('Form submitted with email:', data.email);
-      await signIn(data.email, data.password);
-      // If login successful, user will be redirected by useEffect
+      await signIn(email, password);
+      navigate('/');
     } catch (error) {
       // Error handling is done in the signIn function
-      console.error('Login error:', error);
-      form.setError('root', {
-        message: 'Login failed. Please check your credentials.'
-      });
+    } finally {
+      setIsLoading(false);
     }
-  };
-  
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
     <div className="min-h-screen bg-slate-900">
       <Navbar />
       
-      <div className="pt-32 pb-12 md:pt-40 md:pb-20 bg-slate-900">
-        <div className="max-w-md mx-auto px-4 sm:px-6">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-display font-bold gradient-text mb-2">
-              Welcome Back
-            </h1>
-            <p className="text-gray-400">
-              Sign in to access your account
-            </p>
-          </div>
+      <div className="flex items-center justify-center px-4 py-32">
+        <Card className="w-full max-w-md glass-card">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-display font-bold text-center gradient-text">
+              Kirish
+            </CardTitle>
+            <CardDescription className="text-center text-gray-400">
+              Hisobingizga kirish uchun ma'lumotlaringizni kiriting
+            </CardDescription>
+          </CardHeader>
           
-          <div className="glass-card p-8 animate-fade-in">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-300">Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="your@email.com" className="bg-white/5 border-white/10 text-white" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-300">Password</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input 
-                            type={showPassword ? "text" : "password"} 
-                            placeholder="••••••••" 
-                            className="bg-white/5 border-white/10 text-white pr-10" 
-                            {...field} 
-                          />
-                          <button 
-                            type="button" 
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
-                            onClick={togglePasswordVisibility}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <CardContent className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-300">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-gray-300">
+                  Parol
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-1 top-1 h-8 w-8 text-gray-400 hover:text-gray-300"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
 
-                {form.formState.errors.root && (
-                  <div className="text-red-500 text-sm text-center">
-                    {form.formState.errors.root.message}
-                  </div>
-                )}
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold"
-                  disabled={form.formState.isSubmitting || loading}
-                >
-                  {form.formState.isSubmitting || loading ? (
-                    <div className="h-5 w-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                  ) : (
-                    <>
-                      <LogIn className="mr-2 h-4 w-4" /> Sign In
-                    </>
-                  )}
-                </Button>
-              </form>
-            </Form>
-            
-            <div className="mt-6 pt-6 border-t border-white/10 text-center">
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 hover:from-cyan-500 hover:to-purple-600 font-semibold shadow-lg shadow-cyan-400/30 hover:shadow-cyan-400/50 transition-all duration-300"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Kirilmoqda...' : 'Kirish'}
+              </Button>
+            </form>
+
+            <Separator className="bg-white/10" />
+
+            <div className="text-center space-y-2">
               <p className="text-sm text-gray-400">
-                Don't have an account?{' '}
-                <Link to="/signup" className="text-yellow-400 hover:text-yellow-300 font-medium">
-                  Create account
+                Hisobingiz yo'qmi?{' '}
+                <Link
+                  to="/signup"
+                  className="font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  Ro'yxatdan o'tish
                 </Link>
               </p>
-              <p className="text-sm text-gray-400 mt-2">
-                Admin panel:{' '}
-                <Link to="/admin/login" className="text-yellow-400 hover:text-yellow-300 font-medium">
-                  Admin Login
-                </Link>
-              </p>
+              <Link
+                to="/forgot-password"
+                className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
+              >
+                Parolni unutdingizmi?
+              </Link>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
       
       <Footer />

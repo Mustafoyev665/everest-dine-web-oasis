@@ -1,241 +1,193 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, UserPlus } from 'lucide-react';
-import Navbar from '@/components/Layout/Navbar';
-import Footer from '@/components/Layout/Footer';
+import React, { useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
-  confirmPassword: z.string(),
-  terms: z.boolean().refine(val => val === true, {
-    message: "You must agree to the terms and conditions to continue."
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-type FormData = z.infer<typeof formSchema>;
+import Navbar from '@/components/Layout/Navbar';
+import Footer from '@/components/Layout/Footer';
 
 const Signup = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp, user } = useAuth();
   const navigate = useNavigate();
-  const { signUp, user, loading } = useAuth();
-  
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      terms: false,
-    },
-  });
 
   // Redirect if already logged in
-  useEffect(() => {
-    if (user && !loading) {
-      navigate('/');
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password || !fullName || !confirmPassword) {
+      return;
     }
-  }, [user, loading, navigate]);
-  
-  const onSubmit = async (data: FormData) => {
+
+    if (password !== confirmPassword) {
+      return;
+    }
+
+    if (password.length < 6) {
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      await signUp(data.email, data.password, data.name);
-      // If signup successful and auto-login happens, user will be redirected by useEffect
-      // If email confirmation is required, user stays on this page with toast message
+      await signUp(email, password, fullName);
+      navigate('/login');
     } catch (error) {
       // Error handling is done in the signUp function
-      console.error('Signup error:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
-  
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-  
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
     <div className="min-h-screen bg-slate-900">
       <Navbar />
       
-      <div className="pt-32 pb-12 md:pt-40 md:pb-20 bg-slate-900">
-        <div className="max-w-md mx-auto px-4 sm:px-6">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-display font-bold gradient-text mb-2">
-              Create Account
-            </h1>
-            <p className="text-gray-400">
-              Join us for an exceptional dining experience
-            </p>
-          </div>
+      <div className="flex items-center justify-center px-4 py-32">
+        <Card className="w-full max-w-md glass-card">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-display font-bold text-center gradient-text">
+              Ro'yxatdan o'tish
+            </CardTitle>
+            <CardDescription className="text-center text-gray-400">
+              Yangi hisob yaratish uchun ma'lumotlaringizni kiriting
+            </CardDescription>
+          </CardHeader>
           
-          <div className="glass-card p-8 animate-fade-in">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-300">Full Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Smith" className="bg-white/5 border-white/10 text-white" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-300">Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="your@email.com" className="bg-white/5 border-white/10 text-white" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-300">Password</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input 
-                            type={showPassword ? "text" : "password"} 
-                            placeholder="••••••••" 
-                            className="bg-white/5 border-white/10 text-white pr-10" 
-                            {...field} 
-                          />
-                          <button 
-                            type="button" 
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
-                            onClick={togglePasswordVisibility}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-300">Confirm Password</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input 
-                            type={showConfirmPassword ? "text" : "password"} 
-                            placeholder="••••••••" 
-                            className="bg-white/5 border-white/10 text-white pr-10" 
-                            {...field} 
-                          />
-                          <button 
-                            type="button" 
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
-                            onClick={toggleConfirmPasswordVisibility}
-                          >
-                            {showConfirmPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="terms"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                      <FormControl>
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 mt-1 accent-yellow-400 rounded border-gray-300"
-                          checked={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div>
-                        <FormLabel className="text-sm text-gray-400 cursor-pointer">
-                          I agree to the{' '}
-                          <Link to="/terms" className="text-yellow-400 hover:text-yellow-300">
-                            terms of service
-                          </Link>{' '}
-                          and{' '}
-                          <Link to="/privacy" className="text-yellow-400 hover:text-yellow-300">
-                            privacy policy
-                          </Link>
-                        </FormLabel>
-                        <FormMessage />
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 hover:from-yellow-500 hover:to-amber-600 font-semibold"
-                  disabled={form.formState.isSubmitting || loading}
-                >
-                  {form.formState.isSubmitting || loading ? (
-                    <div className="h-5 w-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                  ) : (
-                    <>
-                      <UserPlus className="mr-2 h-4 w-4" /> Create Account
-                    </>
-                  )}
-                </Button>
-              </form>
-            </Form>
-            
-            <div className="mt-6 pt-6 border-t border-white/10 text-center">
+          <CardContent className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="fullName" className="text-gray-300">
+                  To'liq ism
+                </Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="fullName"
+                    type="text"
+                    placeholder="Ismingiz va familiyangiz"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-300">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-gray-300">
+                  Parol
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+                    required
+                    minLength={6}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-1 top-1 h-8 w-8 text-gray-400 hover:text-gray-300"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-gray-300">
+                  Parolni tasdiqlash
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-1 top-1 h-8 w-8 text-gray-400 hover:text-gray-300"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+                {password !== confirmPassword && confirmPassword && (
+                  <p className="text-sm text-red-400">Parollar mos kelmaydi</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 hover:from-cyan-500 hover:to-purple-600 font-semibold shadow-lg shadow-cyan-400/30 hover:shadow-cyan-400/50 transition-all duration-300"
+                disabled={isLoading || password !== confirmPassword}
+              >
+                {isLoading ? "Ro'yxatdan o'tilmoqda..." : "Ro'yxatdan o'tish"}
+              </Button>
+            </form>
+
+            <Separator className="bg-white/10" />
+
+            <div className="text-center">
               <p className="text-sm text-gray-400">
-                Already have an account?{' '}
-                <Link to="/login" className="text-yellow-400 hover:text-yellow-300 font-medium">
-                  Sign in
+                Allaqachon hisobingiz bormi?{' '}
+                <Link
+                  to="/login"
+                  className="font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  Kirish
                 </Link>
               </p>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
       
       <Footer />
