@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, ShoppingCart, Heart, User, LogOut } from 'lucide-react';
+import { Menu, ShoppingCart, Heart, User, LogOut, Settings } from 'lucide-react';
 import { useShoppingContext } from '@/context/ShoppingContext';
 import { useAuth } from '@/hooks/useAuth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { cartItems, likedItems } = useShoppingContext();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const cartItemsCount = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -87,6 +87,16 @@ const Navbar = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
+            {/* Admin Panel Button */}
+            {isAdmin && (
+              <Link to="/admin/dashboard">
+                <Button variant="ghost" size="sm" className="text-yellow-400 hover:text-yellow-300 border border-yellow-400/30 hover:bg-yellow-400/10">
+                  <Settings className="w-4 h-4 mr-1" />
+                  Admin Panel
+                </Button>
+              </Link>
+            )}
+
             {/* Cart & Liked Items */}
             <div className="flex items-center space-x-2">
               <Link to="/liked" className="relative">
@@ -125,6 +135,17 @@ const Navbar = () => {
                     <User className="w-4 h-4 mr-2" />
                     {user.email}
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator className="bg-white/10" />
+                      <DropdownMenuItem asChild className="text-yellow-400 focus:text-yellow-300 cursor-pointer">
+                        <Link to="/admin/dashboard">
+                          <Settings className="w-4 h-4 mr-2" />
+                          Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator className="bg-white/10" />
                   <DropdownMenuItem 
                     onClick={handleSignOut}
@@ -160,6 +181,15 @@ const Navbar = () => {
               <SheetContent side="right" className="glass-card border-white/10">
                 <div className="flex flex-col space-y-6 mt-6">
                   <NavLinks onClose={() => setIsOpen(false)} />
+                  
+                  {isAdmin && (
+                    <Link to="/admin/dashboard" onClick={() => setIsOpen(false)}>
+                      <Button variant="outline" className="w-full justify-start text-yellow-400 border-yellow-400/30 hover:bg-yellow-400/10">
+                        <Settings className="w-4 h-4 mr-2" />
+                        Admin Panel
+                      </Button>
+                    </Link>
+                  )}
                   
                   {!user && (
                     <div className="flex flex-col space-y-2 pt-4">
