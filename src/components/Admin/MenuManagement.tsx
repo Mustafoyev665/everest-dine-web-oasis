@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { Plus, Edit, Trash2, Save, X, Eye, EyeOff } from 'lucide-react';
+import SeedDataButton from './SeedDataButton';
 
 interface MenuItemDB {
   id?: number;
@@ -208,6 +208,9 @@ const MenuManagement = () => {
           Yangi mahsulot
         </Button>
       </div>
+
+      {/* Seed Data Button */}
+      <SeedDataButton />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
